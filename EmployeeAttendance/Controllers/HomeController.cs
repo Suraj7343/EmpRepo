@@ -78,8 +78,6 @@ namespace EmployeeAttendance.Controllers
             }
             return View();
         }
-
-
         #region LogInAndLogOutTestCode
         //public ActionResult Login(AdminLogInVM adminLogInVM)
         //{
