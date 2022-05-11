@@ -1,0 +1,172 @@
+﻿@model EmployeeAttendance.BAL.Models.EmployeeVM
+@*@model List<SelectListItem>*@
+
+@{
+    ViewBag.Title = "Details";
+    var projectList = ViewBag.ProjectList;
+}
+<br />
+<br />
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <h1 class="panel-title text-center">Employee Detail</h1>
+    </div>
+    <div class="panel-body">
+        <p>
+            <div class="jumbotron col-lg-12">
+                <div class="form-horizontal">
+                    <div class="col-md-6">
+                        <dl class="dl-horizontal">
+                            <dt>
+                                ProjectAssigned
+                            </dt>
+                            <div>
+                                <table>
+                                    @if (ViewBag.Projects != null)
+                                    {
+                                        foreach (var item in ViewBag.Projects)
+                                        {
+                                            <tr>
+                                                <td>
+                                                    @item.ProjectName
+
+                                                </td>
+                                            </tr>
+                                        }
+                                    }
+                                    else
+                                    {   
+                                      <label class="text-primary">No Project Assigned</label>
+                                    }
+                                </table>
+                            </div>
+                            <br />
+                            <br />
+                            <dt>
+                                @Html.DisplayNameFor(model => model.FirstName)
+                            </dt>
+                            <dd>
+                                @Html.DisplayFor(model => model.FirstName)
+                            </dd>
+                            <dt>
+                                @Html.DisplayNameFor(model => model.LastName)
+                            </dt>
+                            <dd>
+                                @Html.DisplayFor(model => model.LastName)
+                            </dd>
+                            <dt>
+                                @Html.DisplayNameFor(model => model.Email)
+                            </dt>
+                            <dd>
+                                @Html.DisplayFor(model => model.Email)
+                            </dd>
+                            <dt>
+                                @Html.DisplayNameFor(model => model.ContactNumber)
+                            </dt>
+                            <dd>
+                                @Html.DisplayFor(model => model.ContactNumber)
+                            </dd>
+                            <dt>
+                                @Html.DisplayNameFor(model => model.DateOfBirth)
+                            </dt>
+                            <dd>
+                                @Html.DisplayFor(model => model.DateOfBirth)
+                            </dd>
+                            <dt>
+                                @Html.DisplayNameFor(model => model.EmployeeAddress)
+                            </dt>
+                            <dd>
+                                @Html.DisplayFor(model => model.EmployeeAddress)
+                            </dd>
+                            <dt>
+                                @Html.DisplayNameFor(model => model.EmployeeSalary)
+                            </dt>
+                            <dd>
+                                @Html.DisplayFor(model => model.EmployeeSalary)
+                            </dd>
+                            <dt>
+                                @Html.DisplayNameFor(model => model.DepartmentName)
+                            </dt>
+                            <dd>
+                                @Html.DisplayFor(model => model.DepartmentName)
+                            </dd>
+
+                            <dt>
+                                ProjectName
+                            </dt>
+                            <div>
+                                @using (Html.BeginForm("DetailsProject", "Employee", FormMethod.Post))
+                                {
+                                    <table>
+                                        @foreach (var item in ViewBag.ProjectList)
+                                        {
+                                            <tr>
+                                                <td>
+                                                    <input type="checkbox" class="Checkbox_temp" checked="@item.IsChecked"
+                                                           id="@item.Value" value="@(item.Key)" name="res" class="chkres" />
+                                                    @*<input type="hidden" class="Checkbox_temp" id="@item.Key" />*@
+                                                </td>
+                                                <td>
+                                                    @item.Value
+
+                                                </td>
+                                            </tr>
+                                        }
+                                    </table>
+                                    <br />
+                                    <br />
+
+                                    <input id="btnAddPoject" type="submit" value="UpdateCheckBox" class="btn btn-primary" />
+                                   
+                                    @Html.ActionLink("Back To List", "Display", new { id = Model.EmployeeId }, new { @class = "btn btn-primary" })
+                                    @Html.ActionLink("Edit", "Edit", "Employee", new { id = Model.EmployeeId }, new { @class = "btn btn-primary" })
+
+                                }
+
+                            </div>
+
+                        </dl>
+                    </div>
+                    <div class="col-md-6">
+                        <dd>
+                            <img src="@Url.Content(Model.EmployeeImage)" height="220" width="300" />
+                        </dd>
+                    </div>
+                </div>
+            </div>
+    </div>
+</div>
+
+
+        </p>
+<link href="~/Content/themes/base/jquery-ui.min.css" rel="stylesheet" />
+@section Scripts {
+    @* @Scripts.Render("~/bundles/jqueryval")*@
+    <script src="~/Scripts/jquery-ui-1.12.0.min.js"></script>
+    <script>
+        $('#btnAddPoject').click(function (e) {
+
+            var projectId = [];
+
+            $('.Checkbox_temp:checked').each(function (i) {
+                projectId[i] = $(this).val();
+            });
+
+
+            $.ajax({
+                type: "POST",
+                url: "/Employee/DetailsProject",
+                data: {
+                    projectId: projectId,
+                },
+                success: function (result) {
+                    window.location.href = "/Employee/Display";
+                    alert(result);
+                },
+                error: function (result) {
+                    alert('error');
+                }
+            });
+        });
+    </script>
+}

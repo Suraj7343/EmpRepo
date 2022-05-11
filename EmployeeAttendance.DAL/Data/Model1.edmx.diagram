@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="8126359a201b4db6be1f838978cda05a" Name="Diagram1">
+        <EntityTypeShape EntityType="EmployeeDetailsDBModel.Department" Width="1.5" PointX="0.75" PointY="3.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="EmployeeDetailsDBModel.EmailModel" Width="1.5" PointX="5.75" PointY="7.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="EmployeeDetailsDBModel.EmployeeDetail" Width="1.5" PointX="3" PointY="2.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="EmployeeDetailsDBModel.exceptionlog" Width="1.5" PointX="0.75" PointY="8.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="EmployeeDetailsDBModel.LoginPage" Width="1.5" PointX="2.75" PointY="8.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="EmployeeDetailsDBModel.LoginTime" Width="1.5" PointX="8" PointY="4.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="EmployeeDetailsDBModel.Project" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="EmployeeDetailsDBModel.UserLoginDetail" Width="1.5" PointX="5.25" PointY="3.25" IsExpanded="true" />
+        <AssociationConnector Association="EmployeeDetailsDBModel.FK__EmployeeD__DepId__1FCDBCEB" ManuallyRouted="false" />
+        <AssociationConnector Association="EmployeeDetailsDBModel.FK__EmployeeD__ProjI__20C1E124" ManuallyRouted="false" />
+        <AssociationConnector Association="EmployeeDetailsDBModel.FK_empId" ManuallyRouted="false" />
+        <AssociationConnector Association="EmployeeDetailsDBModel.FK_Time" ManuallyRouted="false" />
+        <EntityTypeShape EntityType="EmployeeDetailsDBModel.Leave" Width="1.5" PointX="7.5" PointY="0.75" />
+        <AssociationConnector Association="EmployeeDetailsDBModel.FK__Leave__UserLeave__71D1E811" />
+        <EntityTypeShape EntityType="EmployeeDetailsDBModel.WorkingDiagnose" Width="1.5" PointX="10" PointY="0.5" />
+        <AssociationConnector Association="EmployeeDetailsDBModel.FK__WorkingDi__DeptI__07C12930" />
+        <AssociationConnector Association="EmployeeDetailsDBModel.FK__WorkingDi__EmpId__06CD04F7" />
+        <AssociationConnector Association="EmployeeDetailsDBModel.FK__WorkingDi__PrjId__08B54D69" />
+        <AssociationConnector Association="EmployeeDetailsDBModel.FK__LoginTime__Proje__151B244E" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

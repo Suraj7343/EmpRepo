@@ -1,0 +1,111 @@
+﻿@model EmployeeAttendance.BAL.Models.leaveVM
+@{
+    ViewBag.Title = "LeaveDetails";
+}
+</br>
+</br>
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <h1 class="panel-title text-center">Employee Detail</h1>
+    </div>
+    <div class="panel-body">
+        <div class="jumbotron col-lg-12">
+            <div class="form-horizontal">
+                <div class="col-md-6">
+                    <dl class="dl-horizontal">
+
+                        <dt>
+                            @Html.DisplayNameFor(model => model.FirstName)
+                        </dt>
+                        <dd>
+                            @Html.DisplayFor(model => model.FirstName)
+                        </dd>
+                        <dt>
+                            @Html.DisplayNameFor(model => model.LastName)
+                        </dt>
+                        <dd>
+                            @Html.DisplayFor(model => model.LastName)
+                        </dd>
+                        <dt>
+                            @Html.DisplayNameFor(model => model.UserName)
+                        </dt>
+                        <dd>
+                            @Html.DisplayFor(model => model.UserName)
+                        </dd>
+                        <dt>
+                            @Html.DisplayNameFor(model => model.Email)
+                        </dt>
+                        <dd>
+                            @Html.DisplayFor(model => model.Email)
+                        </dd>
+                        <dt>
+                            @Html.DisplayNameFor(model => model.ContactNumber)
+                        </dt>
+                        <dd>
+                            @Html.DisplayFor(model => model.ContactNumber)
+                        </dd>
+                        <dt>
+                            @Html.DisplayNameFor(model => model.DateOfBirth)
+                        </dt>
+                        <dd>
+                            @Html.DisplayFor(model => model.DateOfBirth)
+                        </dd>
+                        <dt>
+                            @Html.DisplayNameFor(model => model.EmployeeAddress)
+                        </dt>
+                        <dd>
+                            @Html.DisplayFor(model => model.EmployeeAddress)
+                        </dd>
+                        <dt>
+                            @Html.DisplayNameFor(model => model.EmployeeSalary)
+                        </dt>
+                        <dd>
+                            @Html.DisplayFor(model => model.EmployeeSalary)
+                        </dd>
+                        <dt>
+                            @Html.DisplayNameFor(model => model.DepartmentName)
+                        </dt>
+                        <dd>
+                            @Html.DisplayFor(model => model.DepartmentName)
+                        </dd>
+                        <dt>
+                            ProjectName
+                        </dt>
+
+                        <div>
+                            <table>
+                                @if (ViewBag.Projects != null)
+                                {
+                                    foreach (var item in ViewBag.Projects)
+                                    {
+                                        <tr>
+                                            <td>
+                                                @*<a class="btn btn-primary" @item.ProjectName></a>*@
+                                                <label class="text-success">@item.ProjectName</label>
+
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    string abc = "";
+                                    abc = "No Project Assigned";
+                                }
+                            </table>
+                    </dl>
+                </div>
+                <div class="col-md-6">
+                    <dd>
+                        <img src="@Url.Content(Model.EmployeeImage)" height="220" width="300" />
+                    </dd>
+                </div>
+            </div>
+        </div>
+        <p>
+
+            @Html.ActionLink("Back To List", "Notification", new { @class = "btn btn-primary" })
+            @*@Html.ActionLink("Edit", "Edit", "Employee", new { id = Model.EmployeeId }, new { @class = "btn btn-primary" })*@
+        </p>
+    </div>
+</div>

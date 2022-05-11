@@ -1,0 +1,752 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="EmployeeDetailsDBModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Department">
+          <Key>
+            <PropertyRef Name="DepartmentId" />
+          </Key>
+          <Property Name="DepartmentId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="DepartmentName" Type="varchar" MaxLength="50" />
+          <Property Name="IsDeleted" Type="bit" />
+          <Property Name="CreatedOn" Type="datetime" />
+        </EntityType>
+        <EntityType Name="EmailModel">
+          <Key>
+            <PropertyRef Name="EmailId" />
+          </Key>
+          <Property Name="EmailId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="EmailTo" Type="nvarchar" MaxLength="50" />
+          <Property Name="Subject" Type="nvarchar" MaxLength="200" />
+          <Property Name="Body" Type="nvarchar" MaxLength="2000" />
+          <Property Name="SenderEmail" Type="varchar" MaxLength="50" />
+          <Property Name="Password" Type="varchar" MaxLength="50" />
+          <Property Name="IsDeleted" Type="bit" />
+          <Property Name="CreatedOn" Type="datetime" />
+        </EntityType>
+        <EntityType Name="EmployeeDetails">
+          <Key>
+            <PropertyRef Name="EmployeeId" />
+          </Key>
+          <Property Name="EmployeeId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="FirstName" Type="varchar" MaxLength="50" />
+          <Property Name="LastName" Type="varchar" MaxLength="50" />
+          <Property Name="Email" Type="varchar" MaxLength="50" />
+          <Property Name="ContactNumber" Type="varchar" MaxLength="50" />
+          <Property Name="DateOfBirth" Type="date" />
+          <Property Name="EmployeeAddress" Type="varchar" MaxLength="50" />
+          <Property Name="EmployeeSalary" Type="int" />
+          <Property Name="EmployeeImage" Type="nvarchar" MaxLength="2000" />
+          <Property Name="IsDeleted" Type="bit" />
+          <Property Name="CreatedOn" Type="datetime" />
+          <Property Name="DepId" Type="uniqueidentifier" />
+          <Property Name="ProjId" Type="uniqueidentifier" />
+          <Property Name="IsAdmin" Type="bit" />
+          <Property Name="JoiningDate" Type="datetime" />
+          <Property Name="RelievingDate" Type="datetime" />
+          <Property Name="CanLogIn" Type="bit" />
+        </EntityType>
+        <EntityType Name="exceptionlog">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="errormessage" Type="text" />
+          <Property Name="source" Type="text" />
+          <Property Name="stacktrace" Type="text" />
+          <Property Name="target" Type="text" />
+          <Property Name="innerexceptionmessage" Type="text" />
+          <Property Name="userid" Type="uniqueidentifier" />
+          <Property Name="message" Type="text" />
+          <Property Name="createdon" Type="timestamp" StoreGeneratedPattern="Computed" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Leave">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="StartDate" Type="datetime" />
+          <Property Name="EndDate" Type="datetime" />
+          <Property Name="Approve" Type="bit" />
+          <Property Name="Reject" Type="bit" />
+          <Property Name="UserLeaveId" Type="uniqueidentifier" />
+          <Property Name="IsDeleted" Type="bit" />
+          <Property Name="CreatedOn" Type="datetime" />
+          <Property Name="Reason" Type="nvarchar" MaxLength="2000" />
+        </EntityType>
+        <EntityType Name="LoginPage">
+          <Key>
+            <PropertyRef Name="LoginId" />
+          </Key>
+          <Property Name="LoginId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="UserName" Type="varchar" MaxLength="50" />
+          <Property Name="UserPassword" Type="varchar" MaxLength="50" />
+          <Property Name="IsDeleted" Type="bit" />
+          <Property Name="CreatedOn" Type="datetime" />
+        </EntityType>
+        <EntityType Name="LoginTimes">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="LoginTimeId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="TimeIn" Type="time" Precision="7" />
+          <Property Name="TimeOut" Type="time" Precision="7" />
+          <Property Name="TotalTime" Type="time" Precision="7" />
+          <Property Name="IsDeleted" Type="bit" />
+          <Property Name="CreatedOn" Type="datetime" />
+          <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="ProjectID" Type="uniqueidentifier" />
+          <Property Name="LeaveStatus" Type="bit" />
+        </EntityType>
+        <EntityType Name="Project">
+          <Key>
+            <PropertyRef Name="ProjectId" />
+          </Key>
+          <Property Name="ProjectId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="ProjectName" Type="varchar" MaxLength="50" />
+          <Property Name="IsDeleted" Type="bit" />
+          <Property Name="CreatedOn" Type="datetime" />
+        </EntityType>
+        <EntityType Name="UserLoginDetails">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="UserLoginDetailsId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="UserName" Type="varchar" MaxLength="50" />
+          <Property Name="Password" Type="varchar" MaxLength="50" />
+          <Property Name="CreatedOn" Type="datetime" />
+          <Property Name="IsDeleted" Type="bit" />
+          <Property Name="IsAdmin" Type="bit" />
+          <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="Email" Type="varchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="WorkingDiagnose">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="EmpId" Type="uniqueidentifier" />
+          <Property Name="DeptId" Type="uniqueidentifier" />
+          <Property Name="PrjId" Type="uniqueidentifier" />
+          <Property Name="IsDeleted" Type="bit" />
+          <Property Name="CreatedOn" Type="datetime" />
+        </EntityType>
+        <Association Name="FK__EmployeeD__DepId__1FCDBCEB">
+          <End Role="Department" Type="Self.Department" Multiplicity="0..1" />
+          <End Role="EmployeeDetails" Type="Self.EmployeeDetails" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Department">
+              <PropertyRef Name="DepartmentId" />
+            </Principal>
+            <Dependent Role="EmployeeDetails">
+              <PropertyRef Name="DepId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Leave__UserLeave__71D1E811">
+          <End Role="UserLoginDetails" Type="Self.UserLoginDetails" Multiplicity="0..1" />
+          <End Role="Leave" Type="Self.Leave" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="UserLoginDetails">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Leave">
+              <PropertyRef Name="UserLeaveId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__LoginTime__Proje__151B244E">
+          <End Role="Project" Type="Self.Project" Multiplicity="0..1" />
+          <End Role="LoginTimes" Type="Self.LoginTimes" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Project">
+              <PropertyRef Name="ProjectId" />
+            </Principal>
+            <Dependent Role="LoginTimes">
+              <PropertyRef Name="ProjectID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__WorkingDi__DeptI__07C12930">
+          <End Role="Department" Type="Self.Department" Multiplicity="0..1" />
+          <End Role="WorkingDiagnose" Type="Self.WorkingDiagnose" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Department">
+              <PropertyRef Name="DepartmentId" />
+            </Principal>
+            <Dependent Role="WorkingDiagnose">
+              <PropertyRef Name="DeptId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__WorkingDi__EmpId__06CD04F7">
+          <End Role="EmployeeDetails" Type="Self.EmployeeDetails" Multiplicity="0..1" />
+          <End Role="WorkingDiagnose" Type="Self.WorkingDiagnose" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="EmployeeDetails">
+              <PropertyRef Name="EmployeeId" />
+            </Principal>
+            <Dependent Role="WorkingDiagnose">
+              <PropertyRef Name="EmpId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__WorkingDi__PrjId__08B54D69">
+          <End Role="Project" Type="Self.Project" Multiplicity="0..1" />
+          <End Role="WorkingDiagnose" Type="Self.WorkingDiagnose" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Project">
+              <PropertyRef Name="ProjectId" />
+            </Principal>
+            <Dependent Role="WorkingDiagnose">
+              <PropertyRef Name="PrjId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_empId">
+          <End Role="EmployeeDetails" Type="Self.EmployeeDetails" Multiplicity="1" />
+          <End Role="UserLoginDetails" Type="Self.UserLoginDetails" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="EmployeeDetails">
+              <PropertyRef Name="EmployeeId" />
+            </Principal>
+            <Dependent Role="UserLoginDetails">
+              <PropertyRef Name="UserLoginDetailsId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Time">
+          <End Role="UserLoginDetails" Type="Self.UserLoginDetails" Multiplicity="1" />
+          <End Role="LoginTimes" Type="Self.LoginTimes" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="UserLoginDetails">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="LoginTimes">
+              <PropertyRef Name="LoginTimeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="EmployeeDetailsDBModelStoreContainer">
+          <EntitySet Name="Department" EntityType="Self.Department" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="EmailModel" EntityType="Self.EmailModel" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="EmployeeDetails" EntityType="Self.EmployeeDetails" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="exceptionlog" EntityType="Self.exceptionlog" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Leave" EntityType="Self.Leave" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="LoginPage" EntityType="Self.LoginPage" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="LoginTimes" EntityType="Self.LoginTimes" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Project" EntityType="Self.Project" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="UserLoginDetails" EntityType="Self.UserLoginDetails" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="WorkingDiagnose" EntityType="Self.WorkingDiagnose" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK__EmployeeD__DepId__1FCDBCEB" Association="Self.FK__EmployeeD__DepId__1FCDBCEB">
+            <End Role="Department" EntitySet="Department" />
+            <End Role="EmployeeDetails" EntitySet="EmployeeDetails" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Leave__UserLeave__71D1E811" Association="Self.FK__Leave__UserLeave__71D1E811">
+            <End Role="UserLoginDetails" EntitySet="UserLoginDetails" />
+            <End Role="Leave" EntitySet="Leave" />
+          </AssociationSet>
+          <AssociationSet Name="FK__LoginTime__Proje__151B244E" Association="Self.FK__LoginTime__Proje__151B244E">
+            <End Role="Project" EntitySet="Project" />
+            <End Role="LoginTimes" EntitySet="LoginTimes" />
+          </AssociationSet>
+          <AssociationSet Name="FK__WorkingDi__DeptI__07C12930" Association="Self.FK__WorkingDi__DeptI__07C12930">
+            <End Role="Department" EntitySet="Department" />
+            <End Role="WorkingDiagnose" EntitySet="WorkingDiagnose" />
+          </AssociationSet>
+          <AssociationSet Name="FK__WorkingDi__EmpId__06CD04F7" Association="Self.FK__WorkingDi__EmpId__06CD04F7">
+            <End Role="EmployeeDetails" EntitySet="EmployeeDetails" />
+            <End Role="WorkingDiagnose" EntitySet="WorkingDiagnose" />
+          </AssociationSet>
+          <AssociationSet Name="FK__WorkingDi__PrjId__08B54D69" Association="Self.FK__WorkingDi__PrjId__08B54D69">
+            <End Role="Project" EntitySet="Project" />
+            <End Role="WorkingDiagnose" EntitySet="WorkingDiagnose" />
+          </AssociationSet>
+          <AssociationSet Name="FK_empId" Association="Self.FK_empId">
+            <End Role="EmployeeDetails" EntitySet="EmployeeDetails" />
+            <End Role="UserLoginDetails" EntitySet="UserLoginDetails" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Time" Association="Self.FK_Time">
+            <End Role="UserLoginDetails" EntitySet="UserLoginDetails" />
+            <End Role="LoginTimes" EntitySet="LoginTimes" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="EmployeeDetailsDBModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="Department">
+          <Key>
+            <PropertyRef Name="DepartmentId" />
+          </Key>
+          <Property Name="DepartmentId" Type="Guid" Nullable="false" />
+          <Property Name="DepartmentName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="IsDeleted" Type="Boolean" />
+          <Property Name="CreatedOn" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="EmployeeDetails" Relationship="Self.FK__EmployeeD__DepId__1FCDBCEB" FromRole="Department" ToRole="EmployeeDetails" />
+          <NavigationProperty Name="WorkingDiagnoses" Relationship="EmployeeDetailsDBModel.FK__WorkingDi__DeptI__07C12930" FromRole="Department" ToRole="WorkingDiagnose" />
+        </EntityType>
+        <EntityType Name="EmailModel">
+          <Key>
+            <PropertyRef Name="EmailId" />
+          </Key>
+          <Property Name="EmailId" Type="Guid" Nullable="false" />
+          <Property Name="EmailTo" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Subject" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="Body" Type="String" MaxLength="2000" FixedLength="false" Unicode="true" />
+          <Property Name="SenderEmail" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Password" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="IsDeleted" Type="Boolean" />
+          <Property Name="CreatedOn" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityType Name="EmployeeDetail">
+          <Key>
+            <PropertyRef Name="EmployeeId" />
+          </Key>
+          <Property Name="EmployeeId" Type="Guid" Nullable="false" />
+          <Property Name="FirstName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="LastName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Email" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="ContactNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="DateOfBirth" Type="DateTime" Precision="0" />
+          <Property Name="EmployeeAddress" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="EmployeeSalary" Type="Int32" />
+          <Property Name="EmployeeImage" Type="String" MaxLength="2000" FixedLength="false" Unicode="true" />
+          <Property Name="IsDeleted" Type="Boolean" />
+          <Property Name="CreatedOn" Type="DateTime" Precision="3" />
+          <Property Name="DepId" Type="Guid" />
+          <Property Name="ProjId" Type="Guid" />
+          <Property Name="IsAdmin" Type="Boolean" />
+          <NavigationProperty Name="Department" Relationship="Self.FK__EmployeeD__DepId__1FCDBCEB" FromRole="EmployeeDetails" ToRole="Department" />
+          <NavigationProperty Name="Project" Relationship="Self.FK__EmployeeD__ProjI__20C1E124" FromRole="EmployeeDetails" ToRole="Project" />
+          <NavigationProperty Name="UserLoginDetails" Relationship="Self.FK_empId" FromRole="EmployeeDetails" ToRole="UserLoginDetails" />
+          <NavigationProperty Name="WorkingDiagnoses" Relationship="EmployeeDetailsDBModel.FK__WorkingDi__EmpId__06CD04F7" FromRole="EmployeeDetail" ToRole="WorkingDiagnose" />
+          <Property Name="JoiningDate" Type="DateTime" Precision="3" />
+          <Property Name="RelievingDate" Type="DateTime" Precision="3" />
+          <Property Name="CanLogIn" Type="Boolean" />
+        </EntityType>
+        <EntityType Name="exceptionlog">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Guid" Nullable="false" />
+          <Property Name="errormessage" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="source" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="stacktrace" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="target" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="innerexceptionmessage" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="userid" Type="Guid" />
+          <Property Name="message" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="createdon" Type="Binary" MaxLength="8" FixedLength="true" Nullable="false" annotation:StoreGeneratedPattern="Computed" />
+        </EntityType>
+        <EntityType Name="LoginPage">
+          <Key>
+            <PropertyRef Name="LoginId" />
+          </Key>
+          <Property Name="LoginId" Type="Guid" Nullable="false" />
+          <Property Name="UserName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="UserPassword" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="IsDeleted" Type="Boolean" />
+          <Property Name="CreatedOn" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityType Name="LoginTime">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="LoginTimeId" Type="Guid" Nullable="false" />
+          <Property Name="TimeIn" Type="Time" Precision="7" />
+          <Property Name="TimeOut" Type="Time" Precision="7" />
+          <Property Name="TotalTime" Type="Time" Precision="7" />
+          <Property Name="IsDeleted" Type="Boolean" />
+          <Property Name="CreatedOn" Type="DateTime" Precision="3" />
+          <Property Name="Id" Type="Guid" Nullable="false" />
+          <NavigationProperty Name="UserLoginDetail" Relationship="Self.FK_Time" FromRole="LoginTimes" ToRole="UserLoginDetails" />
+          <Property Name="ProjectID" Type="Guid" />
+          <NavigationProperty Name="Project" Relationship="EmployeeDetailsDBModel.FK__LoginTime__Proje__151B244E" FromRole="LoginTime" ToRole="Project" />
+          <Property Name="LeaveStatus" Type="Boolean" />
+        </EntityType>
+        <EntityType Name="Project">
+          <Key>
+            <PropertyRef Name="ProjectId" />
+          </Key>
+          <Property Name="ProjectId" Type="Guid" Nullable="false" />
+          <Property Name="ProjectName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="IsDeleted" Type="Boolean" />
+          <Property Name="CreatedOn" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="EmployeeDetails" Relationship="Self.FK__EmployeeD__ProjI__20C1E124" FromRole="Project" ToRole="EmployeeDetails" />
+          <NavigationProperty Name="WorkingDiagnoses" Relationship="EmployeeDetailsDBModel.FK__WorkingDi__PrjId__08B54D69" FromRole="Project" ToRole="WorkingDiagnose" />
+          <NavigationProperty Name="LoginTimes" Relationship="EmployeeDetailsDBModel.FK__LoginTime__Proje__151B244E" FromRole="Project" ToRole="LoginTime" />
+        </EntityType>
+        <EntityType Name="UserLoginDetail">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="UserLoginDetailsId" Type="Guid" Nullable="false" />
+          <Property Name="UserName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Password" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="CreatedOn" Type="DateTime" Precision="3" />
+          <Property Name="IsDeleted" Type="Boolean" />
+          <Property Name="IsAdmin" Type="Boolean" />
+          <Property Name="Id" Type="Guid" Nullable="false" />
+          <Property Name="Email" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="EmployeeDetail" Relationship="Self.FK_empId" FromRole="UserLoginDetails" ToRole="EmployeeDetails" />
+          <NavigationProperty Name="LoginTimes" Relationship="Self.FK_Time" FromRole="UserLoginDetails" ToRole="LoginTimes" />
+          <NavigationProperty Name="Leaves" Relationship="EmployeeDetailsDBModel.FK__Leave__UserLeave__71D1E811" FromRole="UserLoginDetail" ToRole="Leave" />
+        </EntityType>
+        <Association Name="FK__EmployeeD__DepId__1FCDBCEB">
+          <End Role="Department" Type="Self.Department" Multiplicity="0..1" />
+          <End Role="EmployeeDetails" Type="Self.EmployeeDetail" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Department">
+              <PropertyRef Name="DepartmentId" />
+            </Principal>
+            <Dependent Role="EmployeeDetails">
+              <PropertyRef Name="DepId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__EmployeeD__ProjI__20C1E124">
+          <End Role="Project" Type="Self.Project" Multiplicity="0..1" />
+          <End Role="EmployeeDetails" Type="Self.EmployeeDetail" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Project">
+              <PropertyRef Name="ProjectId" />
+            </Principal>
+            <Dependent Role="EmployeeDetails">
+              <PropertyRef Name="ProjId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_empId">
+          <End Role="EmployeeDetails" Type="Self.EmployeeDetail" Multiplicity="1" />
+          <End Role="UserLoginDetails" Type="Self.UserLoginDetail" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="EmployeeDetails">
+              <PropertyRef Name="EmployeeId" />
+            </Principal>
+            <Dependent Role="UserLoginDetails">
+              <PropertyRef Name="UserLoginDetailsId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Time">
+          <End Role="UserLoginDetails" Type="Self.UserLoginDetail" Multiplicity="1" />
+          <End Role="LoginTimes" Type="Self.LoginTime" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="UserLoginDetails">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="LoginTimes">
+              <PropertyRef Name="LoginTimeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="EmployeeDetailsDBEntities1" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Departments" EntityType="Self.Department" />
+          <EntitySet Name="EmailModels" EntityType="Self.EmailModel" />
+          <EntitySet Name="EmployeeDetails" EntityType="Self.EmployeeDetail" />
+          <EntitySet Name="exceptionlogs" EntityType="Self.exceptionlog" />
+          <EntitySet Name="LoginPages" EntityType="Self.LoginPage" />
+          <EntitySet Name="LoginTimes" EntityType="Self.LoginTime" />
+          <EntitySet Name="Projects" EntityType="Self.Project" />
+          <EntitySet Name="UserLoginDetails" EntityType="Self.UserLoginDetail" />
+          <AssociationSet Name="FK__EmployeeD__DepId__1FCDBCEB" Association="Self.FK__EmployeeD__DepId__1FCDBCEB">
+            <End Role="Department" EntitySet="Departments" />
+            <End Role="EmployeeDetails" EntitySet="EmployeeDetails" />
+          </AssociationSet>
+          <AssociationSet Name="FK__EmployeeD__ProjI__20C1E124" Association="Self.FK__EmployeeD__ProjI__20C1E124">
+            <End Role="Project" EntitySet="Projects" />
+            <End Role="EmployeeDetails" EntitySet="EmployeeDetails" />
+          </AssociationSet>
+          <AssociationSet Name="FK_empId" Association="Self.FK_empId">
+            <End Role="EmployeeDetails" EntitySet="EmployeeDetails" />
+            <End Role="UserLoginDetails" EntitySet="UserLoginDetails" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Time" Association="Self.FK_Time">
+            <End Role="UserLoginDetails" EntitySet="UserLoginDetails" />
+            <End Role="LoginTimes" EntitySet="LoginTimes" />
+          </AssociationSet>
+          <EntitySet Name="Leaves" EntityType="EmployeeDetailsDBModel.Leave" />
+          <AssociationSet Name="FK__Leave__UserLeave__71D1E811" Association="EmployeeDetailsDBModel.FK__Leave__UserLeave__71D1E811">
+            <End Role="UserLoginDetail" EntitySet="UserLoginDetails" />
+            <End Role="Leave" EntitySet="Leaves" />
+          </AssociationSet>
+          <EntitySet Name="WorkingDiagnoses" EntityType="EmployeeDetailsDBModel.WorkingDiagnose" />
+          <AssociationSet Name="FK__WorkingDi__DeptI__07C12930" Association="EmployeeDetailsDBModel.FK__WorkingDi__DeptI__07C12930">
+            <End Role="Department" EntitySet="Departments" />
+            <End Role="WorkingDiagnose" EntitySet="WorkingDiagnoses" />
+          </AssociationSet>
+          <AssociationSet Name="FK__WorkingDi__EmpId__06CD04F7" Association="EmployeeDetailsDBModel.FK__WorkingDi__EmpId__06CD04F7">
+            <End Role="EmployeeDetail" EntitySet="EmployeeDetails" />
+            <End Role="WorkingDiagnose" EntitySet="WorkingDiagnoses" />
+          </AssociationSet>
+          <AssociationSet Name="FK__WorkingDi__PrjId__08B54D69" Association="EmployeeDetailsDBModel.FK__WorkingDi__PrjId__08B54D69">
+            <End Role="Project" EntitySet="Projects" />
+            <End Role="WorkingDiagnose" EntitySet="WorkingDiagnoses" />
+          </AssociationSet>
+          <AssociationSet Name="FK__LoginTime__Proje__151B244E" Association="EmployeeDetailsDBModel.FK__LoginTime__Proje__151B244E">
+            <End Role="Project" EntitySet="Projects" />
+            <End Role="LoginTime" EntitySet="LoginTimes" />
+          </AssociationSet>
+        </EntityContainer>
+        <EntityType Name="Leave">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Guid" Nullable="false" />
+          <Property Name="StartDate" Type="DateTime" Precision="3" />
+          <Property Name="EndDate" Type="DateTime" Precision="3" />
+          <Property Name="Approve" Type="Boolean" />
+          <Property Name="Reject" Type="Boolean" />
+          <Property Name="UserLeaveId" Type="Guid" />
+          <Property Name="IsDeleted" Type="Boolean" />
+          <Property Name="CreatedOn" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="UserLoginDetail" Relationship="EmployeeDetailsDBModel.FK__Leave__UserLeave__71D1E811" FromRole="Leave" ToRole="UserLoginDetail" />
+          <Property Name="Reason" Type="String" MaxLength="2000" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <Association Name="FK__Leave__UserLeave__71D1E811">
+          <End Type="EmployeeDetailsDBModel.UserLoginDetail" Role="UserLoginDetail" Multiplicity="0..1" />
+          <End Type="EmployeeDetailsDBModel.Leave" Role="Leave" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="UserLoginDetail">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Leave">
+              <PropertyRef Name="UserLeaveId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="WorkingDiagnose">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Guid" Nullable="false" />
+          <Property Name="EmpId" Type="Guid" />
+          <Property Name="DeptId" Type="Guid" />
+          <Property Name="PrjId" Type="Guid" />
+          <Property Name="IsDeleted" Type="Boolean" />
+          <Property Name="CreatedOn" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="Department" Relationship="EmployeeDetailsDBModel.FK__WorkingDi__DeptI__07C12930" FromRole="WorkingDiagnose" ToRole="Department" />
+          <NavigationProperty Name="EmployeeDetail" Relationship="EmployeeDetailsDBModel.FK__WorkingDi__EmpId__06CD04F7" FromRole="WorkingDiagnose" ToRole="EmployeeDetail" />
+          <NavigationProperty Name="Project" Relationship="EmployeeDetailsDBModel.FK__WorkingDi__PrjId__08B54D69" FromRole="WorkingDiagnose" ToRole="Project" />
+        </EntityType>
+        <Association Name="FK__WorkingDi__DeptI__07C12930">
+          <End Type="EmployeeDetailsDBModel.Department" Role="Department" Multiplicity="0..1" />
+          <End Type="EmployeeDetailsDBModel.WorkingDiagnose" Role="WorkingDiagnose" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Department">
+              <PropertyRef Name="DepartmentId" />
+            </Principal>
+            <Dependent Role="WorkingDiagnose">
+              <PropertyRef Name="DeptId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__WorkingDi__EmpId__06CD04F7">
+          <End Type="EmployeeDetailsDBModel.EmployeeDetail" Role="EmployeeDetail" Multiplicity="0..1" />
+          <End Type="EmployeeDetailsDBModel.WorkingDiagnose" Role="WorkingDiagnose" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="EmployeeDetail">
+              <PropertyRef Name="EmployeeId" />
+            </Principal>
+            <Dependent Role="WorkingDiagnose">
+              <PropertyRef Name="EmpId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__WorkingDi__PrjId__08B54D69">
+          <End Type="EmployeeDetailsDBModel.Project" Role="Project" Multiplicity="0..1" />
+          <End Type="EmployeeDetailsDBModel.WorkingDiagnose" Role="WorkingDiagnose" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Project">
+              <PropertyRef Name="ProjectId" />
+            </Principal>
+            <Dependent Role="WorkingDiagnose">
+              <PropertyRef Name="PrjId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__LoginTime__Proje__151B244E">
+          <End Type="EmployeeDetailsDBModel.Project" Role="Project" Multiplicity="0..1" />
+          <End Type="EmployeeDetailsDBModel.LoginTime" Role="LoginTime" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Project">
+              <PropertyRef Name="ProjectId" />
+            </Principal>
+            <Dependent Role="LoginTime">
+              <PropertyRef Name="ProjectID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="EmployeeDetailsDBModelStoreContainer" CdmEntityContainer="EmployeeDetailsDBEntities1">
+          <EntitySetMapping Name="Departments">
+            <EntityTypeMapping TypeName="EmployeeDetailsDBModel.Department">
+              <MappingFragment StoreEntitySet="Department">
+                <ScalarProperty Name="DepartmentId" ColumnName="DepartmentId" />
+                <ScalarProperty Name="DepartmentName" ColumnName="DepartmentName" />
+                <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
+                <ScalarProperty Name="CreatedOn" ColumnName="CreatedOn" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="EmailModels">
+            <EntityTypeMapping TypeName="EmployeeDetailsDBModel.EmailModel">
+              <MappingFragment StoreEntitySet="EmailModel">
+                <ScalarProperty Name="EmailId" ColumnName="EmailId" />
+                <ScalarProperty Name="EmailTo" ColumnName="EmailTo" />
+                <ScalarProperty Name="Subject" ColumnName="Subject" />
+                <ScalarProperty Name="Body" ColumnName="Body" />
+                <ScalarProperty Name="SenderEmail" ColumnName="SenderEmail" />
+                <ScalarProperty Name="Password" ColumnName="Password" />
+                <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
+                <ScalarProperty Name="CreatedOn" ColumnName="CreatedOn" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="EmployeeDetails">
+            <EntityTypeMapping TypeName="EmployeeDetailsDBModel.EmployeeDetail">
+              <MappingFragment StoreEntitySet="EmployeeDetails">
+                <ScalarProperty Name="CanLogIn" ColumnName="CanLogIn" />
+                <ScalarProperty Name="RelievingDate" ColumnName="RelievingDate" />
+                <ScalarProperty Name="JoiningDate" ColumnName="JoiningDate" />
+                <ScalarProperty Name="EmployeeId" ColumnName="EmployeeId" />
+                <ScalarProperty Name="FirstName" ColumnName="FirstName" />
+                <ScalarProperty Name="LastName" ColumnName="LastName" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="ContactNumber" ColumnName="ContactNumber" />
+                <ScalarProperty Name="DateOfBirth" ColumnName="DateOfBirth" />
+                <ScalarProperty Name="EmployeeAddress" ColumnName="EmployeeAddress" />
+                <ScalarProperty Name="EmployeeSalary" ColumnName="EmployeeSalary" />
+                <ScalarProperty Name="EmployeeImage" ColumnName="EmployeeImage" />
+                <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
+                <ScalarProperty Name="CreatedOn" ColumnName="CreatedOn" />
+                <ScalarProperty Name="DepId" ColumnName="DepId" />
+                <ScalarProperty Name="ProjId" ColumnName="ProjId" />
+                <ScalarProperty Name="IsAdmin" ColumnName="IsAdmin" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="exceptionlogs">
+            <EntityTypeMapping TypeName="EmployeeDetailsDBModel.exceptionlog">
+              <MappingFragment StoreEntitySet="exceptionlog">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="errormessage" ColumnName="errormessage" />
+                <ScalarProperty Name="source" ColumnName="source" />
+                <ScalarProperty Name="stacktrace" ColumnName="stacktrace" />
+                <ScalarProperty Name="target" ColumnName="target" />
+                <ScalarProperty Name="innerexceptionmessage" ColumnName="innerexceptionmessage" />
+                <ScalarProperty Name="userid" ColumnName="userid" />
+                <ScalarProperty Name="message" ColumnName="message" />
+                <ScalarProperty Name="createdon" ColumnName="createdon" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="LoginPages">
+            <EntityTypeMapping TypeName="EmployeeDetailsDBModel.LoginPage">
+              <MappingFragment StoreEntitySet="LoginPage">
+                <ScalarProperty Name="LoginId" ColumnName="LoginId" />
+                <ScalarProperty Name="UserName" ColumnName="UserName" />
+                <ScalarProperty Name="UserPassword" ColumnName="UserPassword" />
+                <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
+                <ScalarProperty Name="CreatedOn" ColumnName="CreatedOn" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="LoginTimes">
+            <EntityTypeMapping TypeName="EmployeeDetailsDBModel.LoginTime">
+              <MappingFragment StoreEntitySet="LoginTimes">
+                <ScalarProperty Name="LeaveStatus" ColumnName="LeaveStatus" />
+                <ScalarProperty Name="ProjectID" ColumnName="ProjectID" />
+                <ScalarProperty Name="LoginTimeId" ColumnName="LoginTimeId" />
+                <ScalarProperty Name="TimeIn" ColumnName="TimeIn" />
+                <ScalarProperty Name="TimeOut" ColumnName="TimeOut" />
+                <ScalarProperty Name="TotalTime" ColumnName="TotalTime" />
+                <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
+                <ScalarProperty Name="CreatedOn" ColumnName="CreatedOn" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Projects">
+            <EntityTypeMapping TypeName="EmployeeDetailsDBModel.Project">
+              <MappingFragment StoreEntitySet="Project">
+                <ScalarProperty Name="ProjectId" ColumnName="ProjectId" />
+                <ScalarProperty Name="ProjectName" ColumnName="ProjectName" />
+                <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
+                <ScalarProperty Name="CreatedOn" ColumnName="CreatedOn" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="UserLoginDetails">
+            <EntityTypeMapping TypeName="EmployeeDetailsDBModel.UserLoginDetail">
+              <MappingFragment StoreEntitySet="UserLoginDetails">
+                <ScalarProperty Name="UserLoginDetailsId" ColumnName="UserLoginDetailsId" />
+                <ScalarProperty Name="UserName" ColumnName="UserName" />
+                <ScalarProperty Name="Password" ColumnName="Password" />
+                <ScalarProperty Name="CreatedOn" ColumnName="CreatedOn" />
+                <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
+                <ScalarProperty Name="IsAdmin" ColumnName="IsAdmin" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Leaves">
+            <EntityTypeMapping TypeName="EmployeeDetailsDBModel.Leave">
+              <MappingFragment StoreEntitySet="Leave">
+                <ScalarProperty Name="Reason" ColumnName="Reason" />
+                <ScalarProperty Name="CreatedOn" ColumnName="CreatedOn" />
+                <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
+                <ScalarProperty Name="UserLeaveId" ColumnName="UserLeaveId" />
+                <ScalarProperty Name="Reject" ColumnName="Reject" />
+                <ScalarProperty Name="Approve" ColumnName="Approve" />
+                <ScalarProperty Name="EndDate" ColumnName="EndDate" />
+                <ScalarProperty Name="StartDate" ColumnName="StartDate" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="WorkingDiagnoses">
+            <EntityTypeMapping TypeName="EmployeeDetailsDBModel.WorkingDiagnose">
+              <MappingFragment StoreEntitySet="WorkingDiagnose">
+                <ScalarProperty Name="CreatedOn" ColumnName="CreatedOn" />
+                <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
+                <ScalarProperty Name="PrjId" ColumnName="PrjId" />
+                <ScalarProperty Name="DeptId" ColumnName="DeptId" />
+                <ScalarProperty Name="EmpId" ColumnName="EmpId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

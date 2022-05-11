@@ -1,0 +1,146 @@
+﻿<!DOCTYPE html>
+@using EmployeeAttendance.WebHelper
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - My ASP.NET Application</title>
+    @Styles.Render("~/Content1/css")
+    @Scripts.Render("~/bundles/modernizr")
+    @{
+        var isAdmin =3;
+        if (Session[SessionKey.isAdmin] != null)
+        {
+            isAdmin = Convert.ToInt32(Session[SessionKey.isAdmin]);
+        }
+        //if (Session["isAdmin"] != null)
+        //{
+        //    isAdmin = (int)(Session["isAdmin"]);
+        //}
+    }
+</head>
+<body>
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+
+            </div>
+
+
+            @if (isAdmin == 1)
+            {
+                <div class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav">
+                        <ul class="nav navbar-nav navbar-left">
+                            <li style="align-content:center">
+                                @Html.ActionLink("<", "Index", "Employee", null, new { id = "<" })
+                            </li>
+                        </ul>
+                        @*<li>@Html.ActionLink("Home", "Index", "Employee", new { area = "" }, new { @class = "navbar-brand" })</li>*@
+                        <li>@Html.ActionLink("Home", "Index", "Employee", null, new { id = "Home" })</li>
+                        <li>@Html.ActionLink("AddDepartment", "Index", "DepartmentAndProject", null, new { id = "Department" })</li>
+                        <li>@Html.ActionLink("LeaveNotification", "Notification", "Employee", null, new { id = "LeaveNotification" })</li>
+                        <li>@Html.ActionLink("TotalTimeOfEmployees", "TotalTimeOfEmployees", "Employee", null, new { id = "TotalTimeOfEmployees" })</li>
+                    </ul>
+                    <ul class="nav navbar-nav navbar-right">
+                        <li style="align-content:center">
+                            @if (Session["userName"] != null)
+                            {
+                            <a class="text-white">@Session["userName"]</a>
+                                @*<input type="text" class="btn btn-primary" value="@TempData["userName"]"/>*@
+                                @*@TempData["userName"]*@
+                            }
+                        </li>
+                        <li style="align-content:center">
+                            @Html.ActionLink("Logout", "LogOff", "Employee", null, new { id = "Logout" })
+                        </li>
+                    </ul>
+                </div>
+
+            }
+            else if (isAdmin == 0)
+            {
+                <div class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav navbar-left">
+                        <li style="align-content:center">
+                            @Html.ActionLink("<", "Index", "DashBoard", null, new { id = "<" })
+                        </li>
+                    </ul>
+                    <ul class="nav navbar-nav">
+                        @*<li>@Html.ActionLink("Home", "Index", "Employee", new { area = "" }, new { @class = "navbar-brand" })</li>*@
+                        <li>@Html.ActionLink("ApplyLeave", "Leave", "DashBoard", null, new { id = "ApplyLeave" })</li>
+                        <li>@Html.ActionLink("LeaveNotification", "LeaveNotification", "DashBoard", null, new { id = "LeaveNotification" })</li>
+                    </ul>
+                    <ul class="nav navbar-nav navbar-right">
+                        <li style="align-content:center">
+                            @if (Session["userName"] != null)
+                            {
+                                <a class="text-white">@Session["userName"]</a>
+                                @*<input type="text" class="btn btn-primary" value="@TempData["userName"]"/>*@
+                                @*@TempData["userName"]*@
+                            }
+                        </li>
+                        <li style="align-content:center">
+                            @Html.ActionLink("Logout", "PopUp", "Employee", null, new { id = "Logout" })
+                        </li>
+                    </ul>
+                </div>
+
+            }
+
+
+        </div>
+    </div>
+    <div class="container body-content">
+        @RenderBody()
+        <hr />
+        <footer>
+            <p>
+                &copy; @DateTime.Now.Year - Attendance Application. All Rights Reserved.
+
+            </p>
+        </footer>
+    </div>
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+</body>
+</html>
+
+
+
+
+
+<!-- #region     -->
+@*<div class="navbar-collapse collapse">
+        <ul class="nav navbar-nav">
+            <li class="dropdown">
+                <a class="dropdown-toggle" role="button" aria-expanded="false" href="#" data-toggle="dropdown">List <span class="caret"></span></a>
+                <ul class="dropdown-menu" role="menu">
+                    <li>@Html.ActionLink("Home", "Index", "Employee", new { area = "" }, new { @class = "navbar-brand" })</li>
+                    <li>@Html.ActionLink("Department", "Index", "DepartmentAndProject", null, new { id = "Department" })</li>
+                    <li>@Html.ActionLink("LeaveNotification", "Notification", "Employee", null, new { id = "LeaveNotification" })</li>
+                    <li>@Html.ActionLink("TotalTimeOfEmployees", "TotalTimeOfEmployees", "Employee", null, new { id = "TotalTimeOfEmployees" })</li>
+
+                </ul>
+                <ul class="col-md-2">
+                        <li>@Html.ActionLink("Logout", "LogOff", "Employee", null, new { id = "Logout" })</li>
+                    </ul>
+
+
+            </li>
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+            <li style="align-content:center">
+                <button type="submit" class="btn btn-danger">Logout</button>
+                @Html.ActionLink("Logout", "LogOff", "Employee", null, new { id = "Logout" })
+            </li>
+        </ul>
+    </div>*@
+<!-- #endregion -->

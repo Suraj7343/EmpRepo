@@ -1,0 +1,63 @@
+﻿@model IEnumerable<EmployeeAttendance.BAL.Models.leaveVM>
+@{
+    ViewBag.Title = "LeaveNotification";
+}
+<br />
+<br />
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <h1 class="panel-title text-center">LeaveNotification</h1>
+    </div>
+    <div class="panel-body">
+
+        <div class="jumbotron">
+            <div class="">
+                <table class="table text-justify">
+                    <tr>
+                        <th>StartDate</th>
+                        <th>EndDate</th>
+                        <th>Reason</th>
+                        <th>Status</th>
+
+                    </tr>
+
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            @Html.HiddenFor(modelItem => item.Id)
+                            <td>
+                                @Html.DisplayFor(modelItem => item.StartDate)
+
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.EndDate)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Reason)
+                            </td>
+                            <td>
+                                @if (item.Approve)
+                                {
+                                    <label class="text-success">your leave is approved</label>
+                                }
+
+                                @if (item.Reject)
+                                {
+                                    <label class="text-danger">your leave is rejected</label>
+                                }
+                            </td>
+
+                        </tr>
+
+                    }
+
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@*<div class="form-group">
+        <a class="btn btn-primary" href="/DashBoard/Index">BackToList</a>
+    </div>*@
+

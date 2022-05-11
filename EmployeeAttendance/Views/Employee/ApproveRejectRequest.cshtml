@@ -1,0 +1,87 @@
+﻿@model EmployeeAttendance.BAL.Models.leaveVM
+@{
+    ViewBag.Title = "ApproveRejectRequest";
+}
+<br />
+<br />
+<h1>@TempData["message"]</h1>
+
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <h1 class="panel-title text-center">Apply For Leave</h1>
+    </div>
+    <div class="panel-body">
+        <div class="form-horizontal">
+            <div class="col-md-6">
+                <dl class="dl-horizontal">
+                    @using(Html.BeginForm("ApproveRejectRequest", "Employee", FormMethod.Post))
+                    {
+                        <dt>
+                            @Html.DisplayNameFor(model => model.StartDate)
+                        </dt>
+                        <dd>
+                            @Html.DisplayFor(model => model.StartDate)
+                        </dd>
+                        <dt>
+                            @Html.DisplayNameFor(model => model.EndDate)
+                        </dt>
+                        <dd>
+                            @Html.DisplayFor(model => model.EndDate)
+                        </dd>
+                        <dt>
+                            @Html.DisplayNameFor(model => model.Reason)
+                        </dt>
+                        <dd class="text-success">
+                            @Html.DisplayFor(model => model.Reason)
+                        </dd>
+                        <dt>
+                            @Html.DisplayNameFor(model => model.Approve)
+                        </dt>
+                        <dd>
+                            @Html.CheckBoxFor(model => model.Approve)
+                        </dd>
+                        <dt>
+                            @Html.DisplayNameFor(model => model.Reject)
+                        </dt>
+                        <dd>
+                            @Html.CheckBoxFor(model => model.Reject)
+                        </dd>
+                        <div class="form-group">
+                            <div class="col-md-offset-2 col-md-10">
+                                <input type="submit" value="Update" class="btn btn-primary" /> &nbsp;
+                            </div>
+                        </div>
+                    }
+
+                </dl>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<link href="~/Content/themes/base/jquery-ui.min.css" rel="stylesheet" />
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <script src="~/Scripts/jquery-ui-1.12.0.min.js"></script>
+
+    <script>
+
+        $(document).ready(function () {
+            $(".datepicker").datepicker({
+                dateFormat: "dd-mm-yy",
+                changemonth: true,
+                changeyear: true
+            });
+            $(".Datepicker").datepicker({
+                dateFormat: "dd-mm-yy",
+                changemonth: true,
+                changeyear: true
+            });
+        });
+
+    </script>
+}
+

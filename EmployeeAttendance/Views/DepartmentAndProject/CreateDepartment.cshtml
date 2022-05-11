@@ -1,0 +1,52 @@
+﻿@model EmployeeAttendance.BAL.Models.DepartmentVM
+@{
+    ViewBag.Title = "CreateDepartment";
+}
+<br />
+<br />
+<h1 class="text-danger" id="msg">@TempData["message"]</h1>
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <h1 class="panel-title text-center">Add New Department</h1>
+    </div>
+    <div class="panel-body">
+        @using (Html.BeginForm("CreateDepartment", "DepartmentAndProject", FormMethod.Post, new { enctype = "multipart/form-data" }))
+        {
+            @Html.AntiForgeryToken()
+            <br />
+            <div class="form-horizontal col-lg-offset-1">
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.DepartmentName, new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.EditorFor(model => model.DepartmentName, new { htmlAttributes = new { @class = "form-control ", @placeholder = "--" } })
+                        @Html.ValidationMessageFor(model => model.DepartmentName, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-md-offset-2 col-md-10">
+                        <input type="submit" value="Create" class="btn btn-primary" /> &nbsp;
+                    </div>
+                </div>
+            </div>
+
+
+        }
+    </div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <script>
+        $(document).ready(function () {
+            setTimeout(function () {
+                $("#msg").fadeOut();
+            }, 3000);
+        });
+
+    </script>
+}

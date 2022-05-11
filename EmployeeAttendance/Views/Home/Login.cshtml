@@ -1,0 +1,79 @@
+﻿@model EmployeeAttendance.BAL.Models.AdminLogInVM
+
+@{
+    ViewBag.Title = "Login";
+}
+<h2>@TempData["message"]</h2>
+<h2>@ViewBag.message</h2>
+
+<div class="text-justify">
+
+    <h2 class="text-center text-primary">Login</h2>
+    <hr />
+    <br /><br />
+    <div class="jumbotron">
+        @using (Html.BeginForm())
+        {
+            @Html.AntiForgeryToken()
+
+            <div class="form-horizontal col-md-offset-4">
+
+                <hr />
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.UserName, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.EditorFor(model => model.UserName, new { htmlAttributes = new { @class = "form-control", @placeholder = "Please Enter Your User Name" } })
+                        @Html.ValidationMessageFor(model => model.UserName, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Password, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        <input type="password" id="upass" name="password" class="form-control , placeholder = " Please Enter Your Password">
+                        <input type="checkbox" id="toggleBtn" onclick="togglePassword()">
+                        <h4 id="msg">@ViewBag.Message</h4>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-offset-5 col-md-5">
+                    <input type="submit" value="LogIn" class="btn btn-info" />
+                </div>
+            </div>
+
+            <br />
+            <br />
+        }
+    </div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <script>
+        function togglePassword() {
+            var upass = document.getElementById('upass');
+            var toggleBtn = document.getElementById('toggleBtn');
+            if (upass.type == "password") {
+                upass.type = "text";
+                toggleBtn.value = "Hide password";
+            } else {
+                upass.type = "Password";
+                toggleBtn.value = "Show the password";
+            }
+        }
+        $(document).ready(function () {
+            setTimeout(function () {
+                $("#msg").fadeOut();
+            }, 3000);
+        });
+
+    </script>
+}
+

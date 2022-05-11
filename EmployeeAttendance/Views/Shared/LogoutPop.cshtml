@@ -1,0 +1,37 @@
+﻿@*@model EmployeeAttendance.BAL.Models.LogInVM*@
+    @{
+        ViewBag.Title = "PopUp";
+    }
+
+    <h2>PopUp</h2>
+
+    @*<div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    </div>
+    <div class="modal-body">
+
+        @Html.DisplayNameFor(model => model.TotalTime)
+        @TempData["message"]
+    </div>
+    <div class="modal-footer">
+        <a href="/Employee/LogOff?Length=8" class="btn btn-primary">Logout</a>
+    </div>*@
+
+@using (Html.BeginForm())
+    {
+
+        <div class="row">
+            <div class="col-md-4">
+                @Html.Label("TotalTime")
+            </div>
+            <div class="col-md-4">
+                @TempData["message"]
+            </div>
+        </div>
+        <div class="modal-footer">
+            <a href="/Employee/LogOff?Length=8" class="btn btn-primary">Logout</a>
+        </div>
+
+    }
+
+
