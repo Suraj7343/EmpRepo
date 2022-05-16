@@ -24,6 +24,7 @@
         <AssociationConnector Association="EmployeeDetailsDBModel.FK__WorkingDi__EmpId__06CD04F7" />
         <AssociationConnector Association="EmployeeDetailsDBModel.FK__WorkingDi__PrjId__08B54D69" />
         <AssociationConnector Association="EmployeeDetailsDBModel.FK__LoginTime__Proje__151B244E" />
+        <AssociationConnector Association="EmployeeDetailsDBModel.FK__Project__Departm__2739D489" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

@@ -1,113 +1,35 @@
-﻿@model EmployeeAttendance.BAL.Models.EmployeeVM
+﻿@model EmployeeAttendance.BAL.Models.LogInVM
 @{
     ViewBag.Title = "Index";
     var testsession = Session["Data"];
 }
 <br />
 <br />
-@*<h2 class="text-primary text-center">
-        @Session["UserName"]
-    </h2>*@
-<div class="panel panel-primary">
-    <div class="panel-heading">
-        <h1 class="panel-title text-center"> @Session["UserName"]</h1>
+<div class="form-group btn-contact">
+    <div class="col-md-6">
+        <a class="btn btn-primary" href="/DashBoard/Detail">View Profile</a>
     </div>
-    <div class="panel-body">
-        @using (Html.BeginForm("LogOff", "Employee", FormMethod.Post))
+</div>
+<br />
+@*<div class="container">
+    <div class="row">*@
+@*<center>
+    <p>
+        @using (Html.BeginForm("SearchByDate", "DashBoard", FormMethod.Post, new { enctype = "multipart/form-data" }))
         {
-            <div class="jumbotron col-lg-12">
+            <input type="date" name="FromDate" />
+            <input type="date" name="ToDate" />
+            <input type="submit" name="submit" value="Search" />
 
-                <div class="col-lg-6">
 
-                    <dl class="dl-horizontal">
-
-                        <dt>
-                            @Html.DisplayNameFor(model => model.Name)
-                        </dt>
-                        <dd>
-                            @Html.DisplayFor(model => model.Name)
-                        </dd>
-                        <dt>
-                            @Html.DisplayNameFor(model => model.Email)
-                        </dt>
-
-                        <dd>
-                            @Html.DisplayFor(model => model.Email)
-                        </dd>
-                        <dt>
-                            @Html.DisplayNameFor(model => model.ContactNumber)
-                        </dt>
-
-                        <dd>
-                            @Html.DisplayFor(model => model.ContactNumber)
-                        </dd>
-                        <dt>
-                            @Html.DisplayNameFor(model => model.DateOfBirth)
-                        </dt>
-
-                        <dd>
-                            @Html.DisplayFor(model => model.DateOfBirth)
-                        </dd>
-                        <dt>
-                            @Html.DisplayNameFor(model => model.EmployeeAddress)
-                        </dt>
-
-                        <dd>
-                            @Html.DisplayFor(model => model.EmployeeAddress)
-                        </dd>
-                        <dt>
-                            @Html.DisplayNameFor(model => model.EmployeeSalary)
-                        </dt>
-
-                        <dd>
-                            @Html.DisplayFor(model => model.EmployeeSalary)
-                        </dd>
-                        <dt>
-                            @Html.DisplayNameFor(model => model.DepartmentName)
-                        </dt>
-
-                        <dd>
-                            @Html.DisplayFor(model => model.DepartmentName)
-                        </dd>
-                        <dt>
-                            ProjectName
-                        </dt>
-
-                        <div>
-                            @using (Html.BeginForm("DetailsProject", "Employee", FormMethod.Post))
-                            {
-                                <table>
-                                    @foreach (var item in ViewBag.ProjectList)
-                                     {
-                                        <tr>
-                                            <td>
-                                                <input type="checkbox" class="Checkbox_temp" checked="@item.IsChecked"
-                                                       id="@item.ProjectName" value="@(item.PrjId)" name="res" class="chkres" />
-                                                @*<input type="hidden" class="Checkbox_temp" id="@item.Key" />*@
-                                            </td>
-                                            <td>
-                                                @item.ProjectName
-                                            </td>
-                                        </tr>
-                                     }
-                                </table>
-                                <br />
-                                <br />
-                                <input id="btnAddPoject" type="submit" value="SwitchToProject" class="btn btn-primary" />
-                            }
-                        </div>
-                    </dl>
-                </div>
-                <div class="col-lg-6">
-                    <dd>
-                        <img src="@Url.Content(Model.EmployeeImage)" height="190" width="250" />
-                    </dd>
-                </div>
-            </div>
         }
-        <div id="partialView">
-        </div>
-    </div>
+    </p>
+</center>*@
+@*</div>
+
+
+    </div>*@
+<div id="partialView">
 </div>
 
 <link href="~/Content/themes/base/jquery-ui.min.css" rel="stylesheet" />
@@ -116,51 +38,66 @@
 
     <script src="~/Scripts/jquery-ui-1.12.0.min.js"></script>
 
-    <script>
-        $(document).ready(function () {
-            $("#abc").click(function () {
-
-            });
-        });
-
-    </script>
-    <script type="text/javascript">
-        $(document).on("click", "#PopUp", function () {
-            $("#Pop").modal("show");
-
-        });
-    </script>
-    <script>
-        $('#btnAddPoject').click(function (e) {
-
-            var projectId = [];
-
-            $('.Checkbox_temp:checked').each(function (i) {
-                projectId[i] = $(this).val();
-            });
-
-            $.ajax({
-                type: "POST",
-                url: "/DashBoard/UpdateCheckBox",
-                data: {
-                    projectId: projectId,
-                },
-                success: function (result) {
-                    window.location.href = "/DashBoard/DashBoardRelatedToProject";
-                    alert(result);
-                },
-                error: function (result) {
-                    alert('error');
-                }
-            });
-        });
-    </script>
-
-   
     <script type="text/javascript">
     $(document).ready(function() {
         $("#partialView").load('@Url.Content("/DashBoard/EmployeeDashBoardList")');
     });
     </script>
+    <script>
+        $(document).ready(function () {
+            $(".datepicker").datepicker({
+                dateFormat: "dd-mm-yy",
+                changemonth: true,
+                changeyear: true
+            });
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+            $(".Datepicker").datepicker({
+                dateFormat: "dd-mm-yy",
+                changemonth: true,
+                changeyear: true
+            });
+        });
+    </script>
 }
+
+
+@*<form>
+
+        @Html.AntiForgeryToken()
+        <br />
+
+
+        <div class="col-sm-6">
+            @Html.LabelFor(model => model.FromDate, new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.FromDate, new { htmlAttributes = new { @class = "datepicker" } })
+                @Html.ValidationMessageFor(model => model.FromDate, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="col-sm-6">
+            @Html.LabelFor(model => model.ToDate, new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.ToDate, new { htmlAttributes = new { @class = "Datepicker" } })
+                @Html.ValidationMessageFor(model => model.ToDate, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="col-xs-6">
+            <div class="form-group btn-contact">
+                <input type="submit" value="Search" class="btn btn-primary" />
+            </div>
+        </div>
+
+        <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <input type="submit" value="Search" class="btn btn-primary" /> &nbsp;
+                </div>
+            </div>
+
+    </form>*@
+
+
 

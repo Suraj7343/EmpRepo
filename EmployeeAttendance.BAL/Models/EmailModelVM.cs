@@ -12,7 +12,7 @@ namespace EmployeeAttendance.BAL.Models
         public System.Guid EmailId { get; set; }
 
         [Required]
-        [EmailAddress]
+        //[EmailAddress]
         public string EmailTo { get; set; }
 
         [Required]

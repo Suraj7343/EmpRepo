@@ -11,9 +11,12 @@ namespace EmployeeAttendance.Controllers
     public class DepartmentAndProjectController : Controller
     {
         private readonly DepartmentService _service;
+
+        private readonly RegistrationService _regservice;
         public DepartmentAndProjectController()
         {
             _service = new DepartmentService();
+            _regservice = new RegistrationService();
         }
 
         // GET: DepartmentAndProject
@@ -23,6 +26,15 @@ namespace EmployeeAttendance.Controllers
 
             departments = _service.DepartmentList();
             return View(departments);
+        }
+
+        public ActionResult Projects()
+        {
+            List<ProjectVM> model = new List<ProjectVM>();
+            ViewBag.DepartmentList = _regservice.GetDepartmentList();
+            model = _service.ProjectList();
+            return View(model);
+
         }
 
         public ActionResult CreateDepartment()
@@ -65,10 +77,47 @@ namespace EmployeeAttendance.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        public ActionResult EditProject(Guid? id)
+        {
+            if (id == null)
+                return View();
+            ViewBag.DepartmentList = _regservice.GetDepartmentList();
+            ProjectVM data = _service.EditProject(id);
+            return View(data);
+        }
+
+        [HttpPost]
+        public ActionResult EditProject(ProjectVM projectVM)
+        {
+         
+            _service.UpdateProject(projectVM);
+            return RedirectToAction(nameof(Projects));
+        }
+
+        public ActionResult DeleteProject(Guid id)
+        {
+            _service.DeleteProject(id);
+            return RedirectToAction(nameof(Projects));
+        }
+
         public ActionResult Delete(Guid id)
         {
             _service.DeleteDepartment(id);
             return RedirectToAction(nameof(Index));
+        }
+
+        public ActionResult ProjectManagement()
+        {
+            ViewBag.DepartmentList = _regservice.GetDepartmentList();
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult ProjectManagement(ProjectVM model)
+        {
+            ViewBag.DepartmentList = _regservice.GetDepartmentList();
+            _service.CreateProjectOnDepartmentBasis(model);
+            return RedirectToAction(nameof(Projects));
         }
     }
 }

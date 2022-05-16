@@ -1,0 +1,69 @@
+﻿@model EmployeeAttendance.BAL.Models.ProjectVM
+@{
+    ViewBag.Title = "EditProject";
+}
+</br>
+</br>
+<div class="form-group btn-contact">
+    <div class="col-md-6">
+        <a class="btn btn-primary" href="/DepartmentAndProject/Projects"><</a>
+    </div>
+</div>
+<br />
+<br />
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <h1 class="panel-title text-center">Edit Department</h1>
+    </div>
+    <div class="panel-body">
+        <div class="jumbotron">
+
+            @using (Html.BeginForm("EditProject", "DepartmentAndProject", FormMethod.Post))
+            {
+                @Html.AntiForgeryToken()
+                @Html.HiddenFor(model => model.DepartmentId)
+                @Html.HiddenFor(model => model.ProjectId)
+
+                <div class="form-horizontal">
+                    <div class="row">
+                        <div class="col-md-6">
+                            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.ProjectName, htmlAttributes: new { @class = "control-label col-md-2" })
+                                <div class="col-md-10">
+                                    @Html.EditorFor(model => model.ProjectName, new { htmlAttributes = new { @class = "form-control" } })
+                                    @Html.ValidationMessageFor(model => model.ProjectName, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+
+                            @*<div class="form-group">
+                                @Html.LabelFor(model => model.DepName, htmlAttributes: new { @class = "control-label col-md-4" })
+                                <div class="col-md-10">
+                                    @Html.EditorFor(model => model.DepName, new { htmlAttributes = new { @class = "form-control" } })
+                                    @Html.ValidationMessageFor(model => model.DepName, "", new { @class = "text-danger" })
+                                </div>
+                            </div>*@
+
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.DepartmentId, htmlAttributes: new { @class = "control-label col-md-2" })
+                                <div class="col-md-10">
+                                    @Html.DropDownList("DepartmentId", new SelectList(ViewBag.DepartmentList, "Key", "Value"), "Select Department", new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(model => model.DepartmentId, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="col-md-6">
+                                    <input type="submit" value="Update" class="btn btn-success" />
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+            }
+        </div>
+    </div>
+</div>

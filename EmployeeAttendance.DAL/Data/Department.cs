@@ -19,6 +19,7 @@ namespace EmployeeAttendance.DAL.Data
         {
             this.EmployeeDetails = new HashSet<EmployeeDetail>();
             this.WorkingDiagnoses = new HashSet<WorkingDiagnose>();
+            this.Projects = new HashSet<Project>();
         }
     
         public System.Guid DepartmentId { get; set; }
@@ -30,5 +31,7 @@ namespace EmployeeAttendance.DAL.Data
         public virtual ICollection<EmployeeDetail> EmployeeDetails { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<WorkingDiagnose> WorkingDiagnoses { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Project> Projects { get; set; }
     }
 }

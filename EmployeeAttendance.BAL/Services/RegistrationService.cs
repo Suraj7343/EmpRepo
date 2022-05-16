@@ -7,6 +7,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 using EmployeeAttendance.Common;
+using PagedList;
+
 namespace EmployeeAttendance.BAL.Services
 {
     public class RegistrationService
@@ -554,6 +556,34 @@ namespace EmployeeAttendance.BAL.Services
             {
                 ExceptionService.SaveException(ex);
             }
+            return result;
+        }
+
+        public IPagedList<EmployeeDetail> Pagination(string sortOrder, string CurrentSort, int? page)
+        {
+
+            int pageSize = 9;
+            int pageIndex = 1;
+            pageIndex = page.HasValue ? Convert.ToInt32(page) : 1;
+           
+               sortOrder = String.IsNullOrEmpty(sortOrder) ? "FirstName" : sortOrder;
+                CurrentSort = sortOrder;
+            
+            IPagedList<EmployeeDetail> result = null;
+            switch (sortOrder)
+            {
+                case "FirstName":
+                    
+                        if (sortOrder.Equals(CurrentSort))
+
+                            result = _context.EmployeeDetails
+                                     .Where(m => m.IsDeleted == false && m.IsAdmin==false)
+                                     .OrderByDescending(x => x.CreatedOn)
+                                     .ToPagedList(page ?? pageIndex, pageSize);
+                    
+                    break;
+            }
+
             return result;
         }
 
@@ -1391,6 +1421,53 @@ namespace EmployeeAttendance.BAL.Services
             {
                 ExceptionService.SaveException(ex);
             }
+            return result;
+        }
+
+        public List<LogInVM> SearchByDate(DateTime? FromDate, DateTime? ToDate)
+        {
+            List<LogInVM> logInVMs = new List<LogInVM>();
+
+            var fromDate = FromDate;
+            var toDate = ToDate;
+
+            var data= _context.LoginTimes.Where(x => x.CreatedOn >= fromDate && x.CreatedOn <= toDate && x.IsDeleted==false && x.TotalTime != null && x.ProjectID == null).ToList();
+
+            foreach (var item in data)
+            {
+                LogInVM logInVM1 = new LogInVM();
+
+                logInVM1.CreatedOn = item.CreatedOn;
+                if(item.TimeIn != null)
+                {
+                    TimeSpan ts = TimeSpan.Parse(item.TimeIn.ToString());  //remove millisecond part from TimeSpan
+                    ts = new TimeSpan(ts.Ticks / TimeSpan.TicksPerSecond * TimeSpan.TicksPerSecond);
+                    logInVM1.TimeIn = ts;
+                     //logInVM1.TimeIn = item.TimeIn;
+                }
+                if(item.TimeOut != null)
+                {
+                    TimeSpan ts = TimeSpan.Parse(item.TimeOut.ToString());  //remove millisecond part from TimeSpan
+                    ts = new TimeSpan(ts.Ticks / TimeSpan.TicksPerSecond * TimeSpan.TicksPerSecond);
+                    logInVM1.TimeOut = ts;
+                    //logInVM1.TimeOut = item.TimeOut;
+                }
+                if(item.TotalTime != null)
+                {
+                    TimeSpan ts = TimeSpan.Parse(item.TotalTime.ToString());  //remove millisecond part from TimeSpan
+                    ts = new TimeSpan(ts.Ticks / TimeSpan.TicksPerSecond * TimeSpan.TicksPerSecond);
+                    logInVM1.TotalTime = ts;
+                    //logInVM1.TotalTime = item.TotalTime;
+                }
+                logInVMs.Add(logInVM1);
+            }
+            return logInVMs;
+        }
+
+         public bool MultiSelectEmail(List<string> email)
+        {
+            bool result = true;
+
             return result;
         }
     }

@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data.Entity;
-using System.Data.SqlClient;
+//using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -15,6 +15,7 @@ using System.Web;
 using System.Web.Mvc;
 using EmployeeAttendance.Common;
 using EmployeeAttendance.WebHelper;
+using System.Data.SqlClient;
 
 namespace EmployeeAttendance.Controllers
 {
@@ -28,9 +29,36 @@ namespace EmployeeAttendance.Controllers
             _service = new RegistrationService();
         }
 
-        public ActionResult Index()
+        //public ActionResult Index()
+        //{
+        //    return View();
+        //}
+
+        public ActionResult Index(string sortOrder, string CurrentSort, int? page)
         {
+            var result = _service.Pagination(sortOrder, CurrentSort, page);
+            return View(result);
+        }
+
+        [HttpPost]
+        public JsonResult MultiSelectEmail(List<string> email)   //employeeId
+        {
+            string JoinDataString = string.Join(",", email.ToArray());
+            return Json(JoinDataString);
+        }
+
+        //for Searching
+        public ActionResult Display()
+        {
+            //var data = _service.GetEmployee();
             return View();
+        }
+
+        [HttpPost]
+        public ActionResult Display(string Search)
+        {
+            var data = _service.FindData(Search);
+            return View(data);
         }
 
         public ActionResult PopUp()
@@ -113,57 +141,45 @@ namespace EmployeeAttendance.Controllers
             return View();
         }
 
-        private static List<SelectListItem> PopulateProjects()
-        {
-            List<SelectListItem> items = new List<SelectListItem>();
+        //private static List<SelectListItem> PopulateProjects()
+        //{
+        //    List<SelectListItem> items = new List<SelectListItem>();
 
-            string abc = ConfigurationManager.ConnectionStrings["EmployeeDetailsDBEntities1"].ConnectionString;
+        //    string abc = ConfigurationManager.ConnectionStrings["EmployeeDetailsDBEntities1"].ConnectionString;
 
-            if (abc.ToLower().StartsWith("metadata="))
-            {
-                System.Data.Entity.Core.EntityClient.EntityConnectionStringBuilder efBuilder = new System.Data.Entity.Core.EntityClient.EntityConnectionStringBuilder(abc);
+        //    if (abc.ToLower().StartsWith("metadata="))
+        //    {
+        //        System.Data.Entity.Core.EntityClient.EntityConnectionStringBuilder efBuilder = new System.Data.Entity.Core.EntityClient.EntityConnectionStringBuilder(abc);
 
-                abc = efBuilder.ProviderConnectionString;
-            }
-            using (SqlConnection con = new SqlConnection(abc))
-            {
-                string query = " SELECT ProjectName, ProjectId FROM Project";
+        //        abc = efBuilder.ProviderConnectionString;
+        //    }
+        //    using (SqlConnection con = new SqlConnection(abc))
+        //    {
+        //        string query = " SELECT ProjectName, ProjectId FROM Project";
 
-                using (SqlCommand cmd = new SqlCommand(query))
-                {
-                    cmd.Connection = con;
-                    con.Open();
-                    using (SqlDataReader sdr = cmd.ExecuteReader())
-                    {
-                        while (sdr.Read())
-                        {
-                            items.Add(new SelectListItem
-                            {
-                                Text = sdr["ProjectName"].ToString(),
-                                Value = sdr["ProjectId"].ToString()
-                            });
-                        }
-                    }
-                    con.Close();
-                }
-            }
+        //        using (SqlCommand cmd = new SqlCommand(query))
+        //        {
+        //            cmd.Connection = con;
+        //            con.Open();
+        //            using (SqlDataReader sdr = cmd.ExecuteReader())
+        //            {
+        //                while (sdr.Read())
+        //                {
+        //                    items.Add(new SelectListItem
+        //                    {
+        //                        Text = sdr["ProjectName"].ToString(),
+        //                        Value = sdr["ProjectId"].ToString()
+        //                    });
+        //                }
+        //            }
+        //            con.Close();
+        //        }
+        //    }
 
-            return items;
-        }
+        //    return items;
+        //}
 
-        //for Searching     
-        public ActionResult Display()
-        {
-            var data = _service.GetEmployee();
-            return View(data);
-        }
-
-        [HttpPost]
-        public ActionResult Display(string Search)
-        {
-            var data = _service.FindData(Search);
-            return View(data);
-        }
+  
 
         public ActionResult Edit(Guid? id)
         {
@@ -292,18 +308,23 @@ namespace EmployeeAttendance.Controllers
             return View();
         }
 
-        public ActionResult SendMail()
+        [HttpGet]
+        public ActionResult SendMail(List<string> email)
         {
-            return View();
+            EmailModelVM model = new EmailModelVM();
+            if (email != null)
+            {
+                model.EmailTo = string.Join(",", email.ToArray());
+            }
+            return View(model);
         }
 
         [HttpPost]
         public ActionResult SendMail(EmailModelVM model)
         {
             try
-            {
-                model.EmailTo = Session["result"].ToString();
-
+            { 
+                //model.EmailTo = Session["result"].ToString();
                 using (MailMessage mm = new MailMessage(model.SenderEmail, model.EmailTo))
                 {
                     mm.Subject = model.Subject;
@@ -318,13 +339,15 @@ namespace EmployeeAttendance.Controllers
                     smtp.UseDefaultCredentials = true;
                     smtp.Credentials = NetworkCred;
                     smtp.Port = 587;
-                    smtp.Send(mm);
+                    //smtp.Send(mm);
 
                     string[] Multi = model.EmailTo.Split(',');
                     foreach (var item in Multi)
                     {
                         mm.To.Add(new MailAddress(item));
+                        smtp.Send(mm);
                     }
+                   
                     Session["Success"] = "SENT SUCCESSFULLY";
                 }
             }

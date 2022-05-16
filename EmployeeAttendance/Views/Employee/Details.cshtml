@@ -118,7 +118,7 @@
 
                                     <input id="btnAddPoject" type="submit" value="UpdateCheckBox" class="btn btn-primary" />
                                    
-                                    @Html.ActionLink("Back To List", "Display", new { id = Model.EmployeeId }, new { @class = "btn btn-primary" })
+                                    @Html.ActionLink("Back To List", "Index", new { id = Model.EmployeeId }, new { @class = "btn btn-primary" })
                                     @Html.ActionLink("Edit", "Edit", "Employee", new { id = Model.EmployeeId }, new { @class = "btn btn-primary" })
 
                                 }
@@ -138,7 +138,7 @@
 </div>
 
 
-        </p>
+        @*</p>*@
 <link href="~/Content/themes/base/jquery-ui.min.css" rel="stylesheet" />
 @section Scripts {
     @* @Scripts.Render("~/bundles/jqueryval")*@

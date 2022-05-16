@@ -109,6 +109,7 @@
           <Property Name="ProjectName" Type="varchar" MaxLength="50" />
           <Property Name="IsDeleted" Type="bit" />
           <Property Name="CreatedOn" Type="datetime" />
+          <Property Name="DepartmentId" Type="uniqueidentifier" />
         </EntityType>
         <EntityType Name="UserLoginDetails">
           <Key>
@@ -167,6 +168,18 @@
             </Principal>
             <Dependent Role="LoginTimes">
               <PropertyRef Name="ProjectID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Project__Departm__2739D489">
+          <End Role="Department" Type="Self.Department" Multiplicity="0..1" />
+          <End Role="Project" Type="Self.Project" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Department">
+              <PropertyRef Name="DepartmentId" />
+            </Principal>
+            <Dependent Role="Project">
+              <PropertyRef Name="DepartmentId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -253,6 +266,10 @@
             <End Role="Project" EntitySet="Project" />
             <End Role="LoginTimes" EntitySet="LoginTimes" />
           </AssociationSet>
+          <AssociationSet Name="FK__Project__Departm__2739D489" Association="Self.FK__Project__Departm__2739D489">
+            <End Role="Department" EntitySet="Department" />
+            <End Role="Project" EntitySet="Project" />
+          </AssociationSet>
           <AssociationSet Name="FK__WorkingDi__DeptI__07C12930" Association="Self.FK__WorkingDi__DeptI__07C12930">
             <End Role="Department" EntitySet="Department" />
             <End Role="WorkingDiagnose" EntitySet="WorkingDiagnose" />
@@ -288,6 +305,7 @@
           <Property Name="CreatedOn" Type="DateTime" Precision="3" />
           <NavigationProperty Name="EmployeeDetails" Relationship="Self.FK__EmployeeD__DepId__1FCDBCEB" FromRole="Department" ToRole="EmployeeDetails" />
           <NavigationProperty Name="WorkingDiagnoses" Relationship="EmployeeDetailsDBModel.FK__WorkingDi__DeptI__07C12930" FromRole="Department" ToRole="WorkingDiagnose" />
+          <NavigationProperty Name="Projects" Relationship="EmployeeDetailsDBModel.FK__Project__Departm__2739D489" FromRole="Department" ToRole="Project" />
         </EntityType>
         <EntityType Name="EmailModel">
           <Key>
@@ -379,6 +397,8 @@
           <NavigationProperty Name="EmployeeDetails" Relationship="Self.FK__EmployeeD__ProjI__20C1E124" FromRole="Project" ToRole="EmployeeDetails" />
           <NavigationProperty Name="WorkingDiagnoses" Relationship="EmployeeDetailsDBModel.FK__WorkingDi__PrjId__08B54D69" FromRole="Project" ToRole="WorkingDiagnose" />
           <NavigationProperty Name="LoginTimes" Relationship="EmployeeDetailsDBModel.FK__LoginTime__Proje__151B244E" FromRole="Project" ToRole="LoginTime" />
+          <Property Name="DepartmentId" Type="Guid" />
+          <NavigationProperty Name="Department" Relationship="EmployeeDetailsDBModel.FK__Project__Departm__2739D489" FromRole="Project" ToRole="Department" />
         </EntityType>
         <EntityType Name="UserLoginDetail">
           <Key>
@@ -491,6 +511,10 @@
             <End Role="Project" EntitySet="Projects" />
             <End Role="LoginTime" EntitySet="LoginTimes" />
           </AssociationSet>
+          <AssociationSet Name="FK__Project__Departm__2739D489" Association="EmployeeDetailsDBModel.FK__Project__Departm__2739D489">
+            <End Role="Department" EntitySet="Departments" />
+            <End Role="Project" EntitySet="Projects" />
+          </AssociationSet>
         </EntityContainer>
         <EntityType Name="Leave">
           <Key>
@@ -578,6 +602,18 @@
             </Principal>
             <Dependent Role="LoginTime">
               <PropertyRef Name="ProjectID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Project__Departm__2739D489">
+          <End Type="EmployeeDetailsDBModel.Department" Role="Department" Multiplicity="0..1" />
+          <End Type="EmployeeDetailsDBModel.Project" Role="Project" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Department">
+              <PropertyRef Name="DepartmentId" />
+            </Principal>
+            <Dependent Role="Project">
+              <PropertyRef Name="DepartmentId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -678,6 +714,7 @@
           <EntitySetMapping Name="Projects">
             <EntityTypeMapping TypeName="EmployeeDetailsDBModel.Project">
               <MappingFragment StoreEntitySet="Project">
+                <ScalarProperty Name="DepartmentId" ColumnName="DepartmentId" />
                 <ScalarProperty Name="ProjectId" ColumnName="ProjectId" />
                 <ScalarProperty Name="ProjectName" ColumnName="ProjectName" />
                 <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />

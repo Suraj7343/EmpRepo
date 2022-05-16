@@ -25,17 +25,34 @@ namespace EmployeeAttendance.Controllers
         }
 
         public ActionResult Index()
+        {   
+            return View();
+        }
+
+        public ActionResult SearchByDate()
         {
-            if(Session["EmpID"] != null)
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult SearchByDate(DateTime? FromDate, DateTime? ToDate)
+        {
+            List<LogInVM> model = new List<LogInVM>();
+            model=  _service.SearchByDate(FromDate, ToDate);
+            return View(model);
+        }
+
+        public ActionResult Detail()
+        {
+            if (Session["EmpID"] != null)
             {
-               ViewBag.ProjectList = _service.GetProjectList();
+                ViewBag.ProjectList = _service.GetProjectList();
             }
             else
             {
                 return View();
             }
             return View(Session["Data"]);
-
         }
 
         public ActionResult EmployeeDashBoardList()

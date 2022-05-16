@@ -7,7 +7,7 @@
 <br />
 <div class="panel panel-primary">
     <div class="panel-heading">
-        <h1 class="panel-title text-center">Search Employee</h1>
+        <h1 class="panel-title text-center">List Of Employee</h1>
     </div>
     <div class="panel-body">
         @using (Html.BeginForm())
@@ -78,7 +78,7 @@
                             <td>
                                 @Html.ActionLink("Edit", "Edit", new { id = item.EmployeeId }) |   @*new { @class = "btn btn-primary" }*@
                                 @Html.ActionLink("Details", "Details", new { id = item.EmployeeId }) |
-                                @Html.ActionLink("SendMail", "SendM", new { id = item.EmployeeId }) |
+                                @Html.ActionLink("Mail", "SendM", new { id = item.EmployeeId }) |
                                 @Html.ActionLink("Delete", "Delete", new { id = item.EmployeeId }, new { onclick = "return confirm('want to delete?')" })
                             </td>
                         </tr>
@@ -92,3 +92,5 @@
 @*<div class="form-group">
         @Html.ActionLink("Back To Index", "Index", "Employee", new { @class = "btn btn-primary" })
     </div>*@
+
+

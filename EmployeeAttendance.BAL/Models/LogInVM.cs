@@ -1,6 +1,7 @@
 ﻿using EmployeeAttendance.DAL.Data;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,6 +21,14 @@ namespace EmployeeAttendance.BAL.Models
         public string ProjectName { get; set; }
         public string Message { get; set; }
         public bool? LeaveStatus { get; set; }
+
+        //[Required]
+        //[DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:yyyy-MM-dd}")]
+        //public DateTime? FromDate { get; set; }
+
+        //[Required]
+        //[DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:yyyy-MM-dd}")]
+        //public DateTime? ToDate { get; set; }
 
         #region MyRegion
         //public virtual Project Project { get; set; }

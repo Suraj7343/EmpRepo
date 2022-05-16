@@ -36,16 +36,18 @@
             {
                 <div class="navbar-collapse collapse">
                     <ul class="nav navbar-nav">
-                        <ul class="nav navbar-nav navbar-left">
+                        @*<ul class="nav navbar-nav navbar-left">
                             <li style="align-content:center">
                                 @Html.ActionLink("<", "Index", "Employee", null, new { id = "<" })
                             </li>
-                        </ul>
+                        </ul>*@
                         @*<li>@Html.ActionLink("Home", "Index", "Employee", new { area = "" }, new { @class = "navbar-brand" })</li>*@
+                        @*<li><i class="fa fa-home" aria-hidden="true"></i></li>*@
                         <li>@Html.ActionLink("Home", "Index", "Employee", null, new { id = "Home" })</li>
                         <li>@Html.ActionLink("AddDepartment", "Index", "DepartmentAndProject", null, new { id = "Department" })</li>
                         <li>@Html.ActionLink("LeaveNotification", "Notification", "Employee", null, new { id = "LeaveNotification" })</li>
                         <li>@Html.ActionLink("TotalTimeOfEmployees", "TotalTimeOfEmployees", "Employee", null, new { id = "TotalTimeOfEmployees" })</li>
+                        <li>@Html.ActionLink("ProjectManagement", "Projects", "DepartmentAndProject", null, new { id = "Projects" })</li>
                     </ul>
                     <ul class="nav navbar-nav navbar-right">
                         <li style="align-content:center">
@@ -66,11 +68,11 @@
             else if (isAdmin == 0)
             {
                 <div class="navbar-collapse collapse">
-                    <ul class="nav navbar-nav navbar-left">
+                    @*<ul class="nav navbar-nav navbar-left">
                         <li style="align-content:center">
                             @Html.ActionLink("<", "Index", "DashBoard", null, new { id = "<" })
                         </li>
-                    </ul>
+                    </ul>*@
                     <ul class="nav navbar-nav">
                         @*<li>@Html.ActionLink("Home", "Index", "Employee", new { area = "" }, new { @class = "navbar-brand" })</li>*@
                         <li>@Html.ActionLink("ApplyLeave", "Leave", "DashBoard", null, new { id = "ApplyLeave" })</li>

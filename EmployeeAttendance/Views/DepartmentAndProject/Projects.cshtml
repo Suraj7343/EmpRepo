@@ -1,0 +1,59 @@
+﻿@model IEnumerable<EmployeeAttendance.BAL.Models.ProjectVM>
+@{
+    ViewBag.Title = "Projects";
+}
+<br />
+<br />
+ 
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <h1 class="panel-title text-center">Project</h1>
+    </div>
+    <div class="panel-body">
+        <div class="form-group">
+            <div class="col-md-6">
+                <a class="btn btn-primary" href="/DepartmentAndProject/ProjectManagement">Create New Project</a>
+            </div>
+        </div>
+        <div class="jumbotron">
+            <div class="">
+                <table class="table text-justify">
+                    <tr>
+                        <th>
+                            Project Name
+                        </th>
+                        <th>
+                            Department Name
+                        </th>
+
+                        <th>Actions</th>
+
+                    </tr>
+
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.ProjectName)
+                                @Html.HiddenFor(modelItem => item.ProjectId)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.DepName)
+                                @Html.HiddenFor(modelItem => item.DepartmentId)
+                            </td>
+
+                            <td>
+                                @Html.ActionLink("Edit", "EditProject", new { id = item.ProjectId }) |
+                                @Html.ActionLink("Delete", "DeleteProject", new { id = item.ProjectId }, new { onclick = "return confirm('want to delete?')" })
+                            </td>
+                        </tr>
+
+                    }
+
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
