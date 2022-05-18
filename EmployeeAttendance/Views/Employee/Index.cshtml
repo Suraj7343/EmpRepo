@@ -6,9 +6,6 @@
 
 <br />
 <br />
-@*<div class="btn btn-info">
-        @Html.ActionLink("Create New", "Create")
-    </div>*@
 <div class="form-group">
     <div class="col-md-6">
         <a class="btn btn-primary" href="/Employee/Create">Create New</a>
@@ -30,16 +27,11 @@
                 <button class=" btn btn-primary"><span class="glyphicon glyphicon-search"></span></button>
             </div>
         }
-
         <div class="row">
             <div class="col-md-offset-8 right">
-                @*@using (Html.BeginForm("MultiSelectEmail", "Employee", FormMethod.Get))
-                {*@
-                    @*<input id="btnAddPoject" type="button" value="UpdateCheckBox" class="btn btn-primary" />*@
-                    <button class="btn btn-primary b1 m-0 marginBot15-sm" id="btnAddPoject">
-                        SendMail
-                    </button>
-                @*}*@
+                <button class="btn btn-primary b1 m-0 marginBot15-sm" id="btnAddPoject">
+                    SendMail
+                </button>
             </div>
         </div>
         <br />
@@ -55,10 +47,7 @@
                         <th>Email</th>
                         <th>Contact</th>
                         <th>DateOfBirth</th>
-                        @*<th>Address</th>*@
-                        @*<th>Salary</th>*@
                         <th>Department</th>
-                        @*<th>Project</th>*@
                         <th>Actions</th>
                         <th>Select</th>
                     </tr>
@@ -85,23 +74,13 @@
                             <td>
                                 @Html.DisplayFor(modelItem => item.DateOfBirth)
                             </td>
-                            @*<td>
-                                    @Html.DisplayFor(modelItem => item.EmployeeAddress)
-                                </td>*@
-                            @*<td>
-                                    @Html.DisplayFor(modelItem => item.EmployeeSalary)
-                                </td>*@
                             <td>
                                 @Html.DisplayFor(modelItem => item.Department.DepartmentName)
                             </td>
-                            @*<td>
-                                    @Html.DisplayFor(modelItem => item.ProjectName)
-                                </td>*@
-
                             <td>
                                 @Html.ActionLink("Edit", "Edit", new { id = item.EmployeeId }) |   @*new { @class = "btn btn-primary" }*@
                                 @Html.ActionLink("Details", "Details", new { id = item.EmployeeId }) |
-                                @Html.ActionLink("Mail", "SendM", new { id = item.EmployeeId }) |
+                                @*@Html.ActionLink("Mail", "SendM", new { id = item.EmployeeId }) |*@
                                 @Html.ActionLink("Delete", "Delete", new { id = item.EmployeeId }, new { onclick = "return confirm('want to delete?')" })
                             </td>
                             <td>
@@ -125,9 +104,7 @@
 </div>
 <link href="~/Content/themes/base/jquery-ui.min.css" rel="stylesheet" />
 @section Scripts {
-    @* @Scripts.Render("~/bundles/jqueryval")*@
     <script src="~/Scripts/jquery-ui-1.12.0.min.js"></script>
-   
 
     <script>
         $('#btnAddPoject').click(function () {
@@ -149,12 +126,13 @@
                     //window.location.href = "/Employee/SendMail?"{ email=result };
                     //window.location.href = "/Employee/SendMail?".html(result); //work
                     window.location.href = "/Employee/SendMail?email=" + result;
-               
-
-               
                 }
             });
+        });
+    </script>
+}
 
+<!-- #region     -->
             // Use alert(response);
             //    success:/* function (result)*/ {
             //        //window.location.href = "/Employee/SendMail";
@@ -164,7 +142,4 @@
             //        alert('error');
             //    }
             //});
-        });
-    </script>
-}
-
+<!-- #endregion -->

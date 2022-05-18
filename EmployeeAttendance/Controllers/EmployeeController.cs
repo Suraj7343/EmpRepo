@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data.Entity;
-//using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -21,6 +20,7 @@ namespace EmployeeAttendance.Controllers
 {
     public class EmployeeController : Controller
     {
+
         // GET: Employee
         private readonly RegistrationService _service;
 
@@ -28,11 +28,6 @@ namespace EmployeeAttendance.Controllers
         {
             _service = new RegistrationService();
         }
-
-        //public ActionResult Index()
-        //{
-        //    return View();
-        //}
 
         public ActionResult Index(string sortOrder, string CurrentSort, int? page)
         {
@@ -179,8 +174,6 @@ namespace EmployeeAttendance.Controllers
         //    return items;
         //}
 
-  
-
         public ActionResult Edit(Guid? id)
         {
             if (id == null)
@@ -322,40 +315,8 @@ namespace EmployeeAttendance.Controllers
         [HttpPost]
         public ActionResult SendMail(EmailModelVM model)
         {
-            try
-            { 
-                //model.EmailTo = Session["result"].ToString();
-                using (MailMessage mm = new MailMessage(model.SenderEmail, model.EmailTo))
-                {
-                    mm.Subject = model.Subject;
-                    mm.Body = model.Body;
-                    mm.IsBodyHtml = false;
-                    SmtpClient smtp = new SmtpClient();
-                    smtp.Host = "smtp.gmail.com";
-                    smtp.EnableSsl = true;
-
-                    NetworkCredential NetworkCred = new NetworkCredential("singhpalwinder8624@gmail.com", "Purewal@0001");
-
-                    smtp.UseDefaultCredentials = true;
-                    smtp.Credentials = NetworkCred;
-                    smtp.Port = 587;
-                    //smtp.Send(mm);
-
-                    string[] Multi = model.EmailTo.Split(',');
-                    foreach (var item in Multi)
-                    {
-                        mm.To.Add(new MailAddress(item));
-                        smtp.Send(mm);
-                    }
-                   
-                    Session["Success"] = "SENT SUCCESSFULLY";
-                }
-            }
-            catch (Exception ex)
-            {
-                ExceptionService.SaveException(ex);
-            }
-            return View();
+            bool result = _service.SendMailSmtp(model);
+            return RedirectToAction(nameof(Index));
         }
 
         #region Notification

@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 using System.Web;
 using EmployeeAttendance.Common;
 using PagedList;
+using System.Net.Mail;
+using System.Net;
 
 namespace EmployeeAttendance.BAL.Services
 {
@@ -145,7 +147,7 @@ namespace EmployeeAttendance.BAL.Services
                     loginTime.TimeIn = CurrentTime;
                     loginTime.ProjectID = project.ProjectId;
                     loginTime.IsDeleted = false;
-                    loginTime.CreatedOn = DateTime.Now;
+                    loginTime.CreatedOn = DateTime.Now.Date;
                     loginTime.LeaveStatus = false;
 
                     _context.LoginTimes.Add(loginTime);
@@ -171,15 +173,24 @@ namespace EmployeeAttendance.BAL.Services
         /// </summary>
         /// <returns>List</returns>
 
-        public List<LogInVM> EmployeeDashBoardList(Guid userId)  
+        public List<LogInVM> EmployeeDashBoardList(Guid userId, DateTime? FromDate, DateTime? ToDate)  
         {
             List<LogInVM> logInVMs = new List<LogInVM>();
             //var logInTimeId = new Guid(HttpContext.Current.Session["userID"].ToString());
             try
             {
-              var lastFourDays = DateTime.Now.AddDays(-5);
-              var result = _context.LoginTimes.Where(x => x.LoginTimeId == userId && x.IsDeleted == false && x.ProjectID == null && x.CreatedOn >= lastFourDays && x.TotalTime != null)
+               List<LoginTime> result = new List<LoginTime>();
+                if (FromDate == null && ToDate == null)
+                {
+                  var lastFourDays = DateTime.Now.AddDays(-5);
+                   result = _context.LoginTimes.Where(x => x.LoginTimeId == userId && x.IsDeleted == false && x.ProjectID == null && x.CreatedOn >= lastFourDays && x.TotalTime != null)
                           .ToList();
+                }
+                else
+                {
+                     result = _context.LoginTimes.Where(x => x.CreatedOn >= FromDate && x.CreatedOn <= ToDate && x.IsDeleted == false && x.TotalTime != null && x.ProjectID == null && x.LoginTimeId == userId)
+                            .ToList();
+                }
              
               if (result.Count > 0)
               {
@@ -190,7 +201,6 @@ namespace EmployeeAttendance.BAL.Services
                       logInVM.LoginTimeId = item.LoginTimeId;
                       if (item.ProjectID != null)
                       {
-                          logInVM.ProjectID = item.ProjectID;
                           logInVM.ProjectName = item.Project.ProjectName;
                       }
              
@@ -220,16 +230,16 @@ namespace EmployeeAttendance.BAL.Services
                       {
                           logInVM.Message = "Present";
                       }
-                      TimeSpan abc = TimeSpan.Parse(("08:00:00").ToString());
+                      //TimeSpan abc = TimeSpan.Parse(("08:00:00").ToString());
              
-                      if (logInVM.TotalTime >= abc)
-                      {
-                          logInVM.Message = "8 Hours";
-                      }
-                      else
-                      {
-                          logInVM.Message = "Less Than 8 Hours";
-                      }
+                      //if (logInVM.TotalTime >= abc)
+                      //{
+                      //    logInVM.Message = "8 Hours";
+                      //}
+                      //else
+                      //{
+                      //    logInVM.Message = "Less Than 8 Hours";
+                      //}
                       logInVMs.Add(logInVM);
                   }
               }
@@ -241,11 +251,52 @@ namespace EmployeeAttendance.BAL.Services
             return logInVMs;
         }
 
-        public bool TotalTimeRelatedToProject()
+        public List<LogInVM> TimeRelatedToProject(Guid userId/*, DateTime? Date*/)
         {
-            bool result = true;
+            List<LogInVM> logInVMs = new List<LogInVM>();
 
-            return result;
+            try
+            {
+                var lastFourDays = DateTime.Now.AddDays(-5);
+                var result = _context.LoginTimes.Where(x => x.LoginTimeId == userId && x.IsDeleted == false && x.LeaveStatus == false && x.ProjectID != null && x.TotalTime != null && x.CreatedOn >= lastFourDays).ToList();
+
+                foreach (var item in result)
+                {
+                    LogInVM model = new LogInVM();
+
+                    model.Id = item.Id;
+                    model.LoginTimeId = item.LoginTimeId;
+                    string shortString = item.CreatedOn.Value.ToShortDateString();  //remove time part from datetime datatype (CreatedOn)
+                    model.Date = shortString;
+                    if (item.TimeIn != null)
+                    {
+                        TimeSpan ts = TimeSpan.Parse(item.TimeIn.ToString());  //remove millisecond part from TimeSpan
+                        ts = new TimeSpan(ts.Ticks / TimeSpan.TicksPerSecond * TimeSpan.TicksPerSecond);
+                        model.TimeIn = ts;
+                    }
+                    if(item.TimeOut != null)
+                    {
+                        TimeSpan ts = TimeSpan.Parse(item.TimeOut.ToString());  //remove millisecond part from TimeSpan
+                        ts = new TimeSpan(ts.Ticks / TimeSpan.TicksPerSecond * TimeSpan.TicksPerSecond);
+                        model.TimeOut = ts;
+                    }
+                    if(item.TotalTime != null)
+                    {
+                        TimeSpan ts = TimeSpan.Parse(item.TotalTime.ToString());  //remove millisecond part from TimeSpan
+                        ts = new TimeSpan(ts.Ticks / TimeSpan.TicksPerSecond * TimeSpan.TicksPerSecond);
+                        model.TotalTime = ts;
+                    }
+                    model.ProjectID = item.ProjectID;
+                    model.ProjectName = item.Project.ProjectName;
+
+                    logInVMs.Add(model);
+                }
+            }
+            catch(Exception ex)
+            {
+                ExceptionService.SaveException(ex);
+            }
+            return logInVMs;
         }
 
         public bool TotalTimeCount()
@@ -253,8 +304,8 @@ namespace EmployeeAttendance.BAL.Services
             bool result = false;
             try
             {
-                var userId = new Guid(HttpContext.Current.Session["LogOut"].ToString());
-                var projectId = new Guid(HttpContext.Current.Session["ProjID"].ToString());
+                var userId = new Guid(HttpContext.Current.Session["LogOut"].ToString()); // id of the logintimes table
+                var projectId = new Guid(HttpContext.Current.Session["ProjID"].ToString()); 
 
                 if (projectId != null)
                 {
@@ -1464,12 +1515,45 @@ namespace EmployeeAttendance.BAL.Services
             return logInVMs;
         }
 
-         public bool MultiSelectEmail(List<string> email)
-        {
+         public bool SendMailSmtp(EmailModelVM model)
+         {
             bool result = true;
 
+            try
+            {
+                //model.EmailTo = Session["result"].ToString();
+                using (MailMessage mm = new MailMessage(model.SenderEmail, model.EmailTo))
+                {
+                    mm.Subject = model.Subject;
+                    mm.Body = model.Body;
+                    mm.IsBodyHtml = false;
+                    SmtpClient smtp = new SmtpClient();
+                    smtp.Host = "smtp.gmail.com";
+                    smtp.EnableSsl = true;
+
+                    NetworkCredential NetworkCred = new NetworkCredential("singhpalwinder8624@gmail.com", "Purewal@0001");
+
+                    smtp.UseDefaultCredentials = true;
+                    smtp.Credentials = NetworkCred;
+                    smtp.Port = 587;
+                    //smtp.Send(mm);
+
+                    string[] Multi = model.EmailTo.Split(',');
+                    foreach (var item in Multi)
+                    {
+                        mm.To.Add(new MailAddress(item));
+                        smtp.Send(mm);
+                    }
+                    //HttpContext.Current.Session["Success"] = "SENT SUCCESSFULLY";
+                }
+            }
+            catch (Exception ex)
+            {
+                ExceptionService.SaveException(ex);
+            }
+
             return result;
-        }
+         }
     }
 }
 

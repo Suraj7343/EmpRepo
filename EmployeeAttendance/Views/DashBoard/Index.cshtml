@@ -1,7 +1,7 @@
-﻿@model EmployeeAttendance.BAL.Models.LogInVM
+﻿@model IEnumerable<EmployeeAttendance.BAL.Models.LogInVM>
 @{
     ViewBag.Title = "Index";
-    var testsession = Session["Data"];
+    //var testsession = Session["Data"];
 }
 <br />
 <br />
@@ -10,58 +10,85 @@
         <a class="btn btn-primary" href="/DashBoard/Detail">View Profile</a>
     </div>
 </div>
-<br />
-@*<div class="container">
-    <div class="row">*@
-@*<center>
+<center>
     <p>
-        @using (Html.BeginForm("SearchByDate", "DashBoard", FormMethod.Post, new { enctype = "multipart/form-data" }))
-        {
-            <input type="date" name="FromDate" />
-            <input type="date" name="ToDate" />
-            <input type="submit" name="submit" value="Search" />
-
-
-        }
+        <input type="date" id="startDate" name="FromDate" />
+        <input type="date" name="ToDate" id="endDate" />
+        <input type="submit" id="btnSearchData" name="submit" value="Search" />
     </p>
-</center>*@
-@*</div>
+</center>
 
-
-    </div>*@
 <div id="partialView">
 </div>
 
 <link href="~/Content/themes/base/jquery-ui.min.css" rel="stylesheet" />
+
 @section Scripts {
-    @Scripts.Render("~/bundles/jqueryval")
-
     <script src="~/Scripts/jquery-ui-1.12.0.min.js"></script>
-
     <script type="text/javascript">
-    $(document).ready(function() {
-        $("#partialView").load('@Url.Content("/DashBoard/EmployeeDashBoardList")');
-    });
-    </script>
-    <script>
-        $(document).ready(function () {
-            $(".datepicker").datepicker({
-                dateFormat: "dd-mm-yy",
-                changemonth: true,
-                changeyear: true
+        $(document).ready(function() {
+            $("#partialView").load('@Url.Content("/DashBoard/SearchByDates")');
+        });
+
+        $('#btnSearchData').click(function () {
+            var FromDate = $('#startDate').val();
+            var ToDate = $('#endDate').val();
+            /*    alert(FromDate);*/
+
+            $.ajax({
+                type: "GET",   //POST
+                url: "/DashBoard/SearchByDates",  //SearchDates
+                data: {
+                    FromDate: FromDate,
+                    ToDate: ToDate,
+                },
+                success: function (result) {
+                    $('#partialView').html(result);
+                }
             });
         });
-    </script>
-    <script>
-        $(document).ready(function () {
-            $(".Datepicker").datepicker({
-                dateFormat: "dd-mm-yy",
-                changemonth: true,
-                changeyear: true
-            });
-        });
+
     </script>
 }
+ @*debugger*@
+                     @*/* window.location.href = "/DashBoard/SearchByDates?FromDate=" + FromDate , "&ToDate=" + ToDate;*/
+                    /*  $("#SearchByDates").html(result)*/
+                   /* + "&para2=" + data2*/*@
+
+
+@*<div id="partialView">
+    </div>
+
+    <link href="~/Content/themes/base/jquery-ui.min.css" rel="stylesheet" />
+    @section Scripts {
+        @Scripts.Render("~/bundles/jqueryval")
+
+        <script src="~/Scripts/jquery-ui-1.12.0.min.js"></script>
+
+        <script type="text/javascript">
+        $(document).ready(function() {
+            $("#partialView").load('@Url.Content("/DashBoard/EmployeeDashBoardList")');
+        });
+        </script>
+        <script>
+            $(document).ready(function () {
+                $(".datepicker").datepicker({
+                    dateFormat: "dd-mm-yy",
+                    changemonth: true,
+                    changeyear: true
+                });
+            });
+        </script>
+        <script>
+            $(document).ready(function () {
+                $(".Datepicker").datepicker({
+                    dateFormat: "dd-mm-yy",
+                    changemonth: true,
+                    changeyear: true
+                });
+            });
+        </script>
+    }*@
 
 
 @*<form>

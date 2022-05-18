@@ -370,6 +370,8 @@
     <Content Include="Views\DepartmentAndProject\EditProject.cshtml" />
     <Content Include="Views\DashBoard\Detail.cshtml" />
     <Content Include="Views\DashBoard\SearchByDate.cshtml" />
+    <Content Include="Views\DashBoard\TimeRelatedToProject.cshtml" />
+    <Content Include="Views\DashBoard\PopUp.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
