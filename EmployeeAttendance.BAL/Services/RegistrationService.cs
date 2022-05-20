@@ -35,7 +35,7 @@ namespace EmployeeAttendance.BAL.Services
                 result.UserName = login.UserName;
                 result.IsAdmin = login.IsAdmin;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 ExceptionService.SaveException(ex);
             }
@@ -91,24 +91,56 @@ namespace EmployeeAttendance.BAL.Services
             Guid result = Guid.Empty;
             try
             {
+
                 if (userId != Guid.Empty)
                 {
                     LoginTime loginTime = new LoginTime();
+                    LogInTimeLogDetail timeLogDetail = new LogInTimeLogDetail();
 
-                    loginTime.Id = Guid.NewGuid();
-                    logInVM.Id = loginTime.Id;  // this id is used to logout the projects
-                    result = loginTime.Id;
+                    var date = DateTime.Now.Date;
+                    var result1 = _context.LoginTimes.FirstOrDefault(x => x.LoginTimeId == userId && x.CreatedOn == date && x.IsDeleted == false);
 
-                    loginTime.LoginTimeId = userId;
-                    TimeSpan CurrentTime = DateTime.Now.TimeOfDay;
-                    loginTime.TimeIn = CurrentTime;
-                    //loginTime.ProjectID = ProjectId;
-                    loginTime.IsDeleted = false;
-                    loginTime.CreatedOn = DateTime.Now.Date;
-                    loginTime.LeaveStatus = false;
+                    if (result1 == null)
+                    {
+                        loginTime.Id = Guid.NewGuid();
+                        logInVM.Id = loginTime.Id;  // this id is used to logout the projects
+                        result = loginTime.Id;
 
-                    _context.LoginTimes.Add(loginTime);
-                    _context.SaveChanges();
+                        loginTime.LoginTimeId = userId;
+                        //TimeSpan CurrentTime = DateTime.Now.TimeOfDay;
+                        loginTime.TimeIn = DateTime.Now; 
+                        //loginTime.ProjectID = ProjectId;
+                        loginTime.IsDeleted = false;
+                        loginTime.CreatedOn = DateTime.Now.Date;
+                        loginTime.LeaveStatus = false;
+
+                        timeLogDetail.Id = Guid.NewGuid();
+                        timeLogDetail.UserLogInTimeId = userId;
+                        timeLogDetail.TimeIn = DateTime.Now;
+                        timeLogDetail.IsDeleted = false;
+                        timeLogDetail.CreatedOn = DateTime.Now.Date;
+                        timeLogDetail.LogInTimeID = loginTime.Id;
+
+                        _context.LoginTimes.Add(loginTime);
+
+                        _context.LogInTimeLogDetails.Add(timeLogDetail);
+                        _context.SaveChanges();
+                    }
+                    else
+                    {
+                        var result2 = _context.LoginTimes.FirstOrDefault(x => x.LoginTimeId == userId && x.IsDeleted == false);
+
+                        timeLogDetail.Id = Guid.NewGuid();
+                        timeLogDetail.UserLogInTimeId = userId;
+                        timeLogDetail.TimeIn = DateTime.Now;
+                        timeLogDetail.IsDeleted = false;
+                        timeLogDetail.CreatedOn = DateTime.Now.Date;
+                        timeLogDetail.LogInTimeID = result2.Id;
+                        HttpContext.Current.Session["LogDetailID"] = timeLogDetail.Id;
+                        _context.LogInTimeLogDetails.Add(timeLogDetail);
+                        _context.SaveChanges();
+
+                    }
                 }
             }
             catch (Exception ex)
@@ -137,19 +169,32 @@ namespace EmployeeAttendance.BAL.Services
                     HttpContext.Current.Session["ProjectName"] = project.ProjectName;
 
                     LoginTime loginTime = new LoginTime();
+                    LogInTimeLogDetail model = new LogInTimeLogDetail();
 
+                    model.Id = Guid.NewGuid();
                     loginTime.Id = Guid.NewGuid();
 
+                    model.LogInTimeID = loginTime.Id;
                     //loginTime.LoginTimeId = new Guid(HttpContext.Current.Session["userID"].ToString());
+                    model.LogInTimeID = userId;
                     loginTime.LoginTimeId = userId;
 
-                    TimeSpan CurrentTime = DateTime.Now.TimeOfDay;
-                    loginTime.TimeIn = CurrentTime;
+                    //TimeSpan CurrentTime = DateTime.Now.TimeOfDay;
+                    model.TimeIn = DateTime.Now;
+                    loginTime.TimeIn = DateTime.Now;
+
+                    model.ProjectId = project.ProjectId;
                     loginTime.ProjectID = project.ProjectId;
+
+                    model.IsDeleted = false;
                     loginTime.IsDeleted = false;
+
+                    model.CreatedOn = DateTime.Now.Date;
                     loginTime.CreatedOn = DateTime.Now.Date;
+
                     loginTime.LeaveStatus = false;
 
+                    _context.LogInTimeLogDetails.Add(model);
                     _context.LoginTimes.Add(loginTime);
                     _context.SaveChanges();
 
@@ -173,76 +218,71 @@ namespace EmployeeAttendance.BAL.Services
         /// </summary>
         /// <returns>List</returns>
 
-        public List<LogInVM> EmployeeDashBoardList(Guid userId, DateTime? FromDate, DateTime? ToDate)  
+        public List<LogInVM> EmployeeDashBoardList(Guid userId, DateTime? FromDate, DateTime? ToDate)
         {
             List<LogInVM> logInVMs = new List<LogInVM>();
             //var logInTimeId = new Guid(HttpContext.Current.Session["userID"].ToString());
             try
             {
-               List<LoginTime> result = new List<LoginTime>();
+                List<LoginTime> result = new List<LoginTime>();
                 if (FromDate == null && ToDate == null)
                 {
-                  var lastFourDays = DateTime.Now.AddDays(-5);
-                   result = _context.LoginTimes.Where(x => x.LoginTimeId == userId && x.IsDeleted == false && x.ProjectID == null && x.CreatedOn >= lastFourDays && x.TotalTime != null)
-                          .ToList();
+                    var lastFourDays = DateTime.Now.AddDays(-5);
+                    result = _context.LoginTimes.Where(x => x.LoginTimeId == userId && x.IsDeleted == false && x.ProjectID == null && x.CreatedOn >= lastFourDays /*&& x.TotalTime != null*/)
+                           .ToList();
                 }
                 else
                 {
-                     result = _context.LoginTimes.Where(x => x.CreatedOn >= FromDate && x.CreatedOn <= ToDate && x.IsDeleted == false && x.TotalTime != null && x.ProjectID == null && x.LoginTimeId == userId)
-                            .ToList();
+                    result = _context.LoginTimes.Where(x => x.CreatedOn >= FromDate && x.CreatedOn <= ToDate && x.IsDeleted == false /*&& x.TotalTime != null*/ && x.ProjectID == null && x.LoginTimeId == userId)
+                           .ToList();
                 }
-             
-              if (result.Count > 0)
-              {
-                  foreach (var item in result)
-                  {
-                      LogInVM logInVM = new LogInVM();
-             
-                      logInVM.LoginTimeId = item.LoginTimeId;
-                      if (item.ProjectID != null)
-                      {
-                          logInVM.ProjectName = item.Project.ProjectName;
-                      }
-             
-                      string shortString = item.CreatedOn.Value.ToShortDateString();  //remove time part from datetime datatype (CreatedOn)
-                      logInVM.Date = shortString;   //Date in loginvm with datatype string
-             
-             
-                      TimeSpan ts = TimeSpan.Parse(item.TimeIn.ToString());  //remove millisecond part from TimeSpan
-                      ts = new TimeSpan(ts.Ticks / TimeSpan.TicksPerSecond * TimeSpan.TicksPerSecond);
-                      logInVM.TimeIn = ts;
-             
-                      TimeSpan ts1 = TimeSpan.Parse(item.TimeOut.ToString());
-                      ts1 = new TimeSpan(ts1.Ticks / TimeSpan.TicksPerSecond * TimeSpan.TicksPerSecond);
-                      logInVM.TimeOut = ts1;
-             
-                      TimeSpan ts2 = TimeSpan.Parse(item.TotalTime.ToString());
-                      ts2 = new TimeSpan(ts2.Ticks / TimeSpan.TicksPerSecond * TimeSpan.TicksPerSecond);
-                      logInVM.TotalTime = ts2;
-             
-                      logInVM.LeaveStatus = item.LeaveStatus;
-             
-                      if (item.LeaveStatus == true)
-                      {
-                          logInVM.Message = "Leave";
-                      }
-                      else
-                      {
-                          logInVM.Message = "Present";
-                      }
-                      //TimeSpan abc = TimeSpan.Parse(("08:00:00").ToString());
-             
-                      //if (logInVM.TotalTime >= abc)
-                      //{
-                      //    logInVM.Message = "8 Hours";
-                      //}
-                      //else
-                      //{
-                      //    logInVM.Message = "Less Than 8 Hours";
-                      //}
-                      logInVMs.Add(logInVM);
-                  }
-              }
+
+                if (result.Count > 0)
+                {
+                    foreach (var item in result)
+                    {
+                        LogInVM logInVM = new LogInVM();
+
+                        logInVM.LoginTimeId = item.LoginTimeId;
+                        if (item.ProjectID != null)
+                        {
+                            logInVM.ProjectName = item.Project.ProjectName;
+                        }
+
+                        string shortString = item.CreatedOn.Value.ToShortDateString();  //remove time part from datetime datatype (CreatedOn)
+                        logInVM.Date = shortString;   //Date in loginvm with datatype string
+
+                        logInVM.TimeIn = item.TimeIn;
+                        DateTime TimeIn = (DateTime)logInVM.TimeIn;
+
+                        logInVM.TimeOut = item.TimeOut;
+                        DateTime TimeOut = (DateTime)logInVM.TimeOut;
+
+                        TimeSpan difference = TimeOut.Subtract(TimeIn);
+
+                        TimeSpan ts2 = TimeSpan.Parse(difference.ToString());
+                        ts2 = new TimeSpan(ts2.Ticks / TimeSpan.TicksPerSecond * TimeSpan.TicksPerSecond);
+                        logInVM.TotalTime = ts2;
+
+                        string timeInString = TimeIn.ToLongTimeString();
+                        logInVM.TimeInString = timeInString;
+
+                        string timeOutString = TimeOut.ToLongTimeString();
+                        logInVM.TimeOutString = timeOutString;
+
+                        logInVM.LeaveStatus = item.LeaveStatus;
+
+                        if (item.LeaveStatus == true)
+                        {
+                            logInVM.Message = "Leave";
+                        }
+                        else
+                        {
+                            logInVM.Message = "Present";
+                        }
+                        logInVMs.Add(logInVM);
+                    }
+                }
             }
             catch (Exception ex)
             {
@@ -251,14 +291,14 @@ namespace EmployeeAttendance.BAL.Services
             return logInVMs;
         }
 
-        public List<LogInVM> TimeRelatedToProject(Guid userId/*, DateTime? Date*/)
+        public List<LogInVM> TimeRelatedToProject(Guid userId, string Date)
         {
             List<LogInVM> logInVMs = new List<LogInVM>();
-
+            DateTime CreatedOn = DateTime.Parse(Date);
             try
             {
                 var lastFourDays = DateTime.Now.AddDays(-5);
-                var result = _context.LoginTimes.Where(x => x.LoginTimeId == userId && x.IsDeleted == false && x.LeaveStatus == false && x.ProjectID != null && x.TotalTime != null && x.CreatedOn >= lastFourDays).ToList();
+                var result = _context.LoginTimes.Where(x => x.LoginTimeId == userId && x.IsDeleted == false && x.LeaveStatus == false && x.ProjectID != null && x.TimeOut != null && x.CreatedOn >= lastFourDays && x.CreatedOn == CreatedOn).ToList();
 
                 foreach (var item in result)
                 {
@@ -268,31 +308,39 @@ namespace EmployeeAttendance.BAL.Services
                     model.LoginTimeId = item.LoginTimeId;
                     string shortString = item.CreatedOn.Value.ToShortDateString();  //remove time part from datetime datatype (CreatedOn)
                     model.Date = shortString;
+
+  
+                    DateTime TimeIn1 = new DateTime();
+                    DateTime TimeOut1 = new DateTime();
                     if (item.TimeIn != null)
                     {
-                        TimeSpan ts = TimeSpan.Parse(item.TimeIn.ToString());  //remove millisecond part from TimeSpan
-                        ts = new TimeSpan(ts.Ticks / TimeSpan.TicksPerSecond * TimeSpan.TicksPerSecond);
-                        model.TimeIn = ts;
+                         model.TimeIn = item.TimeIn;
+                         TimeIn1 = (DateTime)model.TimeIn;
+
+                        string timeInString = TimeIn1.ToLongTimeString();
+                        model.TimeInString = timeInString;
                     }
-                    if(item.TimeOut != null)
+                    if (item.TimeOut != null)
                     {
-                        TimeSpan ts = TimeSpan.Parse(item.TimeOut.ToString());  //remove millisecond part from TimeSpan
-                        ts = new TimeSpan(ts.Ticks / TimeSpan.TicksPerSecond * TimeSpan.TicksPerSecond);
-                        model.TimeOut = ts;
+                        model.TimeOut = item.TimeOut;
+                        TimeOut1 = (DateTime)model.TimeOut;
+
+                        string timeOutString = TimeOut1.ToLongTimeString();
+                        model.TimeOutString = timeOutString;
                     }
-                    if(item.TotalTime != null)
-                    {
-                        TimeSpan ts = TimeSpan.Parse(item.TotalTime.ToString());  //remove millisecond part from TimeSpan
-                        ts = new TimeSpan(ts.Ticks / TimeSpan.TicksPerSecond * TimeSpan.TicksPerSecond);
-                        model.TotalTime = ts;
-                    }
+                    TimeSpan difference = TimeOut1.Subtract(TimeIn1);
+
+                    TimeSpan ts2 = TimeSpan.Parse(difference.ToString());
+                    ts2 = new TimeSpan(ts2.Ticks / TimeSpan.TicksPerSecond * TimeSpan.TicksPerSecond);
+                    model.TotalTime = ts2;
+
                     model.ProjectID = item.ProjectID;
                     model.ProjectName = item.Project.ProjectName;
 
                     logInVMs.Add(model);
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 ExceptionService.SaveException(ex);
             }
@@ -305,115 +353,25 @@ namespace EmployeeAttendance.BAL.Services
             try
             {
                 var userId = new Guid(HttpContext.Current.Session["LogOut"].ToString()); // id of the logintimes table
-                var projectId = new Guid(HttpContext.Current.Session["ProjID"].ToString()); 
+                var projectId = new Guid(HttpContext.Current.Session["ProjID"].ToString());
 
                 if (projectId != null)
                 {
                     LoginTime loginTime = _context.LoginTimes.FirstOrDefault(x => x.Id == userId && x.IsDeleted == false && x.ProjectID == projectId);
                     if (loginTime != null)
                     {
-                        loginTime.TimeOut = DateTime.Now.TimeOfDay;
-                        TimeSpan Interval = (TimeSpan)loginTime.TimeOut - (TimeSpan)loginTime.TimeIn;
-                        loginTime.TotalTime = Interval;
-                        HttpContext.Current.Session["Count"] = Interval;
+                        loginTime.TimeOut = DateTime.Now;
+                        //DateTime TimeOut = (DateTime)loginTime.TimeIn;
+
+                       
+                        //TimeSpan Interval = (TimeSpan)loginTime.TimeOut - (TimeSpan)loginTime.TimeIn;
+                        //loginTime.TotalTime = Interval;
+                        //HttpContext.Current.Session["Count"] = Interval;
                         _context.Entry(loginTime).State = System.Data.Entity.EntityState.Modified;
                         _context.SaveChanges();
 
-                        #region MyRegion
-
-                        //string abc = (loginTime.TimeOut).ToString();
-                        ////TimeSpan timeSpan = (TimeSpan)(loginTime.TimeOut).Subtract(loginTime.TimeIn);
-                        ////double totalHours = timeSpan.TotalHours;
-                        //string[] fields = abc.Split(':');
-                        ////if (fields.Length < 2) { throw new ArgumentException("No valid time of day pattern found in input text"); }
-                        //int hour = Convert.ToInt32(fields[0]);
-                        //int minutes = hour * 60;
-
-                        //string hour1 = abc;
-                        //string hour2 = (loginTime.TimeIn).ToString();
-
-                        ////find total number of minutes for each hour above  
-                        ////int minutes1 = (int.Parse(hour1.Split(':')[0]) * 60);
-                        //int minutes1 = int.Parse(hour1.Split('.')[0]) * 60 + int.Parse(hour1.Split('.')[1] + int.Parse(hour1.Split('.')[2]) / 60);
-                        //int minutes2 = int.Parse(hour2.Split('.')[0]) * 60 + int.Parse(hour2.Split('.')[1] + int.Parse(hour1.Split('.')[2]) / 60 + int.Parse(hour1.Split('.')[3]) / 60000);
-
-                        ////calculate back to hours and minutes and reassemble as a string
-                        //string result1 = (minutes1 + minutes2) / 60 + "." + (minutes1 + minutes2) % 60;
-
-                        //loginTime.TotalTime =TimeSpan.Parse(result1);
-                        //TimeSpan Time = TimeSpan.Parse((Interval.Hours).ToString()); 
-
-                        //loginTime.TotalTime = Time;
-                        #endregion
                     }
                 }
-
-                #region MyRegion
-                // if (loginTime.LoginTimeId == (Guid)HttpContext.Current.Session["userID"])
-
-                // {
-                // loginTime.Id = (Guid)HttpContext.Current.Session["LogOut"];
-                // loginTime.Id = (Guid)HttpContext.Current.Session["LogOut"];
-                //loginTime.LoginTimeId = (Guid)HttpContext.Current.Session["userID"];
-                //        loginTime.TimeIn= (TimeSpan)HttpContext.Current.Session["Time"];
-
-                //loginTime.TimeOut = CurrentTime;
-                //_context.LoginTimes.Add(loginTime);
-                //_context.SaveChanges();
-                //        bool result = true;
-                //        var employeeDetail = _context.LoginTimes.FirstOrDefault(x => x.Id == employeeDetail);
-                //        if (employeeDetail != null)
-                //        {
-                //            var logintime = employeeDetail.login
-
-
-
-                //            employeeDetail.time = DateTime.Now;
-                //            employeeDetail.DepId = employeeVM.DepId;
-                //            employeeDetail.ProjId = employeeVM.ProjId; ;
-                //            _context.Entry(employeeDetail).State = System.Data.Entity.EntityState.Modified;
-                //            _context.SaveChanges();
-
-                //            //}
-                //        }
-                //        return result;
-
-                //}
-                //public bool LogInTime(Guid id)
-                //{
-
-                //    return 
-                //}
-                /*  public void LoginStatus(LogInVM logInVM)
-                  {
-                      LoginTime login = new LoginTime();
-                      UserLoginDetail userLoginDetails = new UserLoginDetail();
-
-                      login.LoginTimeId = Guid.NewGuid();
-                      login.IsDeleted = false;
-                      login.CreatedOn = DateTime.Now;
-
-                      login.UserId = adminSignUp.AdminId;
-                      login.TimeIn = DateTime.Now;
-                      _context.LoginTimes.Add(login);
-                      _context.SaveChanges();
-                  }*/
-                #endregion
-
-                #region MyRegion
-                //    TimeSpan duration = (TimeSpan)loginTime.TotalTime;
-                //TimeSpan ts = new TimeSpan();
-                //TimeSpan duration=Interval.Duration;
-                //double totalMinutes = Interval.TotalMinutes;
-                //double time = totalMinutes;
-                //double totalMinutes = span.TotalMinutes;
-                //double totalMinutes = span.TotalMinutes;
-                //double.Parse(string.Format("-HH.mm"));
-                /*loginTime.TotalTime = TimeSpan.FromMinutes(totalMinutes);*/
-                //loginTime.TotalTime = (TimeSpan)loginTime.TimeOut - (TimeSpan)loginTime.TimeIn;
-
-                #endregion
-
                 result = true;
             }
             catch (Exception ex)
@@ -423,26 +381,49 @@ namespace EmployeeAttendance.BAL.Services
             return result;
         }
 
-        public bool DirectLogOutTime(Guid logInTimeTableId)
+        public bool DirectLogOutTime(Guid logInTimeTableId, Guid userId)
         {
             bool result = false;
             try
             {
-               //if (HttpContext.Current.Session["logInTimesTableID"] == null)
-               if (logInTimeTableId == null)
-               {
-                   //AdminLogInVM adminLogInVM = AdminLogin();
-               }
-               else
-               {
-                   //var userID = new Guid(HttpContext.Current.Session["logInTimesTableID"].ToString());
-                   LoginTime loginTime = _context.LoginTimes.FirstOrDefault(x => x.Id == logInTimeTableId && x.IsDeleted == false && x.ProjectID == null);
-                   loginTime.TimeOut = DateTime.Now.TimeOfDay;
-                   loginTime.TotalTime = loginTime.TimeOut - loginTime.TimeIn;
-              
-                   _context.Entry(loginTime).State = System.Data.Entity.EntityState.Modified;
-                   _context.SaveChanges();
-               }
+                if (logInTimeTableId == Guid.Empty)
+                {
+                    var LogDetailID = new Guid(HttpContext.Current.Session["LogDetailID"].ToString());
+                    //var userID = new Guid(HttpContext.Current.Session["logInTimesTableID"].ToString());
+                    var model = _context.LogInTimeLogDetails.FirstOrDefault(x => x.Id == LogDetailID && x.IsDeleted == false && x.ProjectId == null);
+
+                    var logInId = model.LogInTimeID;
+                    model.TimeOut = DateTime.Now;
+                    //DATEDIFF(minutes, TimeIn, TimeOut) / 60;
+                    _context.Entry(model).State = System.Data.Entity.EntityState.Modified;
+
+                    LoginTime loginTime = _context.LoginTimes.FirstOrDefault(x => x.Id == logInId && x.IsDeleted == false && x.ProjectID == null);
+
+                    //loginTime.TimeOut = DateTime.Now.TimeOfDay;
+                    loginTime.TimeOut = DateTime.Now;
+                    //loginTime.TotalTime = loginTime.TimeOut - loginTime.TimeIn;
+                    _context.Entry(loginTime).State = System.Data.Entity.EntityState.Modified;
+
+                    _context.SaveChanges();
+                }
+                else
+                {
+                        LoginTime loginTime = _context.LoginTimes.FirstOrDefault(x => x.Id == logInTimeTableId && x.IsDeleted == false && x.ProjectID == null);
+                       
+                        //loginTime.TimeOut = DateTime.Now.TimeOfDay;
+                        loginTime.TimeOut = DateTime.Now;
+                        //loginTime.TotalTime = loginTime.TimeOut - loginTime.TimeIn;
+                        _context.Entry(loginTime).State = System.Data.Entity.EntityState.Modified;
+
+                        LogInTimeLogDetail model1 = _context.LogInTimeLogDetails.FirstOrDefault(x => x.LogInTimeID == logInTimeTableId && x.IsDeleted == false && x.ProjectId == null);
+                  
+                        model1.TimeOut = DateTime.Now;
+                        //DATEDIFF(minutes, TimeIn, TimeOut) / 60;
+                        _context.Entry(model1).State = System.Data.Entity.EntityState.Modified;
+                        _context.SaveChanges();
+                    
+
+                }
             }
             catch (Exception ex)
             {
@@ -451,44 +432,47 @@ namespace EmployeeAttendance.BAL.Services
             return result;
         }
 
-        public TimeSpan? LogOutAndTotalTimeCount()
-        { 
-            var userId = new Guid(HttpContext.Current.Session["LogOut"].ToString());
-
-            var TotalLoginTime = _context.LoginTimes.FirstOrDefault(x => x.Id == userId && x.IsDeleted == false && x.CreatedOn == DateTime.Today);
-
-            TimeSpan? totalTime = TotalLoginTime.TotalTime;
-            return totalTime;
-        }
-
         public List<LogInVM> ProjectTotalTimeCount()
         {
             List<LogInVM> logInVMs = new List<LogInVM>();
             try
             {
                 var userId = new Guid(HttpContext.Current.Session["LogOut"].ToString());
-               
+
                 var LastDay = DateTime.Today;
-              
+
                 var data = _context.LoginTimes.FirstOrDefault(x => x.Id == userId && x.IsDeleted == false);
-              
+
                 HttpContext.Current.Session["LoginTimeId"] = data.LoginTimeId;
-              
+
                 var logInTimeId = new Guid(HttpContext.Current.Session["LoginTimeId"].ToString());
-              
-                var result = _context.LoginTimes.Where(x => x.LoginTimeId == logInTimeId && x.CreatedOn >= LastDay && x.TotalTime != null && x.ProjectID != null)
+
+                var result = _context.LoginTimes.Where(x => x.LoginTimeId == logInTimeId && x.CreatedOn >= LastDay /*&& x.TotalTime != null*/ && x.ProjectID != null)
                   .ToList();
-              
+
                 foreach (var item in result)
                 {
                     LogInVM logInVM = new LogInVM();
                     logInVM.LoginTimeId = item.LoginTimeId;
                     logInVM.ProjectID = item.ProjectID;
                     logInVM.ProjectName = item.Project.ProjectName;
+
                     logInVM.TimeIn = item.TimeIn;
+                    DateTime TimeIn = (DateTime)logInVM.TimeIn;
+                    string timeInString = TimeIn.ToLongTimeString();
+                    logInVM.TimeInString = timeInString;
+
                     logInVM.TimeOut = item.TimeOut;
-                    logInVM.TotalTime = item.TotalTime;
-              
+                    DateTime TimeOut = (DateTime)logInVM.TimeIn;
+                    string timeOutString = TimeIn.ToLongTimeString();
+                    logInVM.TimeOutString = timeOutString;
+
+                    TimeSpan difference = TimeOut.Subtract(TimeIn);
+
+                    TimeSpan ts2 = TimeSpan.Parse(difference.ToString());
+                    ts2 = new TimeSpan(ts2.Ticks / TimeSpan.TicksPerSecond * TimeSpan.TicksPerSecond);
+                    logInVM.TotalTime = ts2;
+
                     logInVMs.Add(logInVM);
                 }
             }
@@ -505,19 +489,19 @@ namespace EmployeeAttendance.BAL.Services
             try
             {
 
-               var userId = new Guid(HttpContext.Current.Session["userID"].ToString());
-               
-               LoginTime loginTime = new LoginTime();
-               
-               loginTime = _context.LoginTimes.Where(x => x.LoginTimeId == userId && x.IsDeleted == false && x.TotalTime != null)
-                   .OrderByDescending(x => x.CreatedOn)
-                   .Take(7).FirstOrDefault();
-               
-               HttpContext.Current.Session["Count"] = loginTime.TotalTime;   /*.Value.Minutes;*/
-               
-               model.CreatedOn = loginTime.CreatedOn;
-               model.LoginTimeId = loginTime.LoginTimeId;
-               model.TotalTime = loginTime.TotalTime;
+                var userId = new Guid(HttpContext.Current.Session["userID"].ToString());
+
+                LoginTime loginTime = new LoginTime();
+
+                loginTime = _context.LoginTimes.Where(x => x.LoginTimeId == userId && x.IsDeleted == false /*&& x.TotalTime != null*/)
+                    .OrderByDescending(x => x.CreatedOn)
+                    .Take(7).FirstOrDefault();
+
+               /* HttpContext.Current.Session["Count"] = loginTime.TotalTime;*/   /*.Value.Minutes;*/
+
+                model.CreatedOn = loginTime.CreatedOn;
+                model.LoginTimeId = loginTime.LoginTimeId;
+                //model.TotalTime = loginTime.TotalTime;
             }
             catch (Exception ex)
             {
@@ -616,22 +600,22 @@ namespace EmployeeAttendance.BAL.Services
             int pageSize = 9;
             int pageIndex = 1;
             pageIndex = page.HasValue ? Convert.ToInt32(page) : 1;
-           
-               sortOrder = String.IsNullOrEmpty(sortOrder) ? "FirstName" : sortOrder;
-                CurrentSort = sortOrder;
-            
+
+            sortOrder = String.IsNullOrEmpty(sortOrder) ? "FirstName" : sortOrder;
+            CurrentSort = sortOrder;
+
             IPagedList<EmployeeDetail> result = null;
             switch (sortOrder)
             {
                 case "FirstName":
-                    
-                        if (sortOrder.Equals(CurrentSort))
 
-                            result = _context.EmployeeDetails
-                                     .Where(m => m.IsDeleted == false && m.IsAdmin==false)
-                                     .OrderByDescending(x => x.CreatedOn)
-                                     .ToPagedList(page ?? pageIndex, pageSize);
-                    
+                    if (sortOrder.Equals(CurrentSort))
+
+                        result = _context.EmployeeDetails
+                                 .Where(m => m.IsDeleted == false && m.IsAdmin == false)
+                                 .OrderByDescending(x => x.CreatedOn)
+                                 .ToPagedList(page ?? pageIndex, pageSize);
+
                     break;
             }
 
@@ -1271,7 +1255,7 @@ namespace EmployeeAttendance.BAL.Services
 
                         var LastFourDays = DateTime.Now.AddDays(-1);
 
-                        var loginTime = _context.LoginTimes.Where(x => x.LoginTimeId == userLogInId && x.IsDeleted == false && x.CreatedOn >= LastFourDays && x.TotalTime != null)
+                        var loginTime = _context.LoginTimes.Where(x => x.LoginTimeId == userLogInId && x.IsDeleted == false && x.CreatedOn >= LastFourDays /*&& x.TotalTime != null*/)
                             .ToList();
 
                         if (loginTime != null)
@@ -1281,8 +1265,23 @@ namespace EmployeeAttendance.BAL.Services
                                 LoginTime loginTime1 = new LoginTime();
 
                                 employeeVM.TimeIn = lis.TimeIn;
+
+                                DateTime TimeIn = (DateTime)employeeVM.TimeIn;
+                                string timeInString = TimeIn.ToLongTimeString();
+                                employeeVM.TimeInString = timeInString;
+
                                 employeeVM.TimeOut = lis.TimeOut;
-                                employeeVM.TotalTime = lis.TotalTime;
+
+                                DateTime TimeOut = (DateTime)employeeVM.TimeOut;
+                                string timeOutString = TimeOut.ToLongTimeString();
+                                employeeVM.TimeOutString = timeInString;
+
+                                TimeSpan difference = TimeOut.Subtract(TimeIn);
+
+                                TimeSpan ts2 = TimeSpan.Parse(difference.ToString());
+                                ts2 = new TimeSpan(ts2.Ticks / TimeSpan.TicksPerSecond * TimeSpan.TicksPerSecond);
+                                employeeVM.TotalTime = ts2;
+
                             }
                         }
                         employee.Add(employeeVM);
@@ -1321,7 +1320,7 @@ namespace EmployeeAttendance.BAL.Services
 
                 var LastFourDays = DateTime.Now.AddDays(-4);
 
-                var loginTime = _context.LoginTimes.Where(x => x.LoginTimeId == userLogInId && x.IsDeleted == false && x.CreatedOn >= LastFourDays && x.TotalTime != null )
+                var loginTime = _context.LoginTimes.Where(x => x.LoginTimeId == userLogInId && x.IsDeleted == false && x.CreatedOn >= LastFourDays /*&& x.TotalTime != null*/)
                     .ToList();
 
                 if (loginTime != null)
@@ -1330,18 +1329,32 @@ namespace EmployeeAttendance.BAL.Services
                     {
                         leaveVM lev = new leaveVM();
 
-                        if(lev.ProjectID == null)
+                        if (lev.ProjectID == null)
                         {
                             lev.MsgForLeave = "TotalTime";
                         }
                         else
                         {
-                          lev.ProjectID = lis.ProjectID;
-                          lev.ProjectName = lis.Project.ProjectName;
+                            lev.ProjectID = lis.ProjectID;
+                            lev.ProjectName = lis.Project.ProjectName;
                         }
                         lev.TimeIn = lis.TimeIn;
+
+                        DateTime TimeIn = (DateTime)lev.TimeIn;
+                        string timeInString = TimeIn.ToLongTimeString();
+                        lev.TimeInString = timeInString;
+
                         lev.TimeOut = lis.TimeOut;
-                        lev.TotalTime = lis.TotalTime;
+                        DateTime TimeOut = (DateTime)lev.TimeOut;
+                        string timeOutString = TimeOut.ToLongTimeString();
+                        lev.TimeInString = timeOutString;
+                        //lev.TotalTime = lis.TotalTime;
+
+                        TimeSpan difference = TimeOut.Subtract(TimeIn);
+
+                        TimeSpan ts2 = TimeSpan.Parse(difference.ToString());
+                        ts2 = new TimeSpan(ts2.Ticks / TimeSpan.TicksPerSecond * TimeSpan.TicksPerSecond);
+                        lev.TotalTime = ts2;
 
                         leaveVMs.Add(lev);
                     }
@@ -1425,10 +1438,10 @@ namespace EmployeeAttendance.BAL.Services
                             loginTime.Id = Guid.NewGuid();
 
                             loginTime.LoginTimeId = new Guid(HttpContext.Current.Session["userLeaveID"].ToString());
-                            TimeSpan workingHours = TimeSpan.Parse(("00:00:00").ToString());
+                            DateTime workingHours = DateTime.Parse(("00:00:00").ToString());
                             loginTime.TimeIn = workingHours;
                             loginTime.TimeOut = workingHours;
-                            loginTime.TotalTime = workingHours;
+                            //loginTime.TotalTime = workingHours;
                             loginTime.CreatedOn = DateTime.Now.Date;
                             loginTime.IsDeleted = false;
                             loginTime.LeaveStatus = true;
@@ -1465,7 +1478,7 @@ namespace EmployeeAttendance.BAL.Services
 
                     _context.WorkingDiagnoses.Add(model);
                     _context.SaveChanges();
-                     result = true;
+                    result = true;
                 }
             }
             catch (Exception ex)
@@ -1482,41 +1495,44 @@ namespace EmployeeAttendance.BAL.Services
             var fromDate = FromDate;
             var toDate = ToDate;
 
-            var data= _context.LoginTimes.Where(x => x.CreatedOn >= fromDate && x.CreatedOn <= toDate && x.IsDeleted==false && x.TotalTime != null && x.ProjectID == null).ToList();
+            var data = _context.LoginTimes.Where(x => x.CreatedOn >= fromDate && x.CreatedOn <= toDate && x.IsDeleted == false/* && x.TotalTime != null*/ && x.ProjectID == null).ToList();
 
             foreach (var item in data)
             {
-                LogInVM logInVM1 = new LogInVM();
+                LogInVM model = new LogInVM();
+                model.CreatedOn = item.CreatedOn;
 
-                logInVM1.CreatedOn = item.CreatedOn;
-                if(item.TimeIn != null)
+                DateTime TimeIn = new DateTime();
+                DateTime TimeOut = new DateTime();
+                if (item.TimeIn != null)
                 {
-                    TimeSpan ts = TimeSpan.Parse(item.TimeIn.ToString());  //remove millisecond part from TimeSpan
-                    ts = new TimeSpan(ts.Ticks / TimeSpan.TicksPerSecond * TimeSpan.TicksPerSecond);
-                    logInVM1.TimeIn = ts;
-                     //logInVM1.TimeIn = item.TimeIn;
+                    model.TimeIn = item.TimeIn;
+                    TimeIn = (DateTime)model.TimeIn;
+
+                    string timeInString = TimeIn.ToLongTimeString();
+                    model.TimeInString = timeInString;
                 }
-                if(item.TimeOut != null)
+                if (item.TimeOut != null)
                 {
-                    TimeSpan ts = TimeSpan.Parse(item.TimeOut.ToString());  //remove millisecond part from TimeSpan
-                    ts = new TimeSpan(ts.Ticks / TimeSpan.TicksPerSecond * TimeSpan.TicksPerSecond);
-                    logInVM1.TimeOut = ts;
-                    //logInVM1.TimeOut = item.TimeOut;
+                    model.TimeOut = item.TimeOut;
+                    TimeOut = (DateTime)model.TimeOut;
+
+                    string timeOutString = TimeOut.ToLongTimeString();
+                    model.TimeInString = timeOutString;
                 }
-                if(item.TotalTime != null)
-                {
-                    TimeSpan ts = TimeSpan.Parse(item.TotalTime.ToString());  //remove millisecond part from TimeSpan
-                    ts = new TimeSpan(ts.Ticks / TimeSpan.TicksPerSecond * TimeSpan.TicksPerSecond);
-                    logInVM1.TotalTime = ts;
-                    //logInVM1.TotalTime = item.TotalTime;
-                }
-                logInVMs.Add(logInVM1);
+                TimeSpan difference = TimeOut.Subtract(TimeIn);
+
+                TimeSpan ts2 = TimeSpan.Parse(difference.ToString());
+                ts2 = new TimeSpan(ts2.Ticks / TimeSpan.TicksPerSecond * TimeSpan.TicksPerSecond);
+                model.TotalTime = ts2;
+
+                logInVMs.Add(model);
             }
             return logInVMs;
         }
 
-         public bool SendMailSmtp(EmailModelVM model)
-         {
+        public bool SendMailSmtp(EmailModelVM model)
+        {
             bool result = true;
 
             try
@@ -1553,7 +1569,7 @@ namespace EmployeeAttendance.BAL.Services
             }
 
             return result;
-         }
+        }
     }
 }
 

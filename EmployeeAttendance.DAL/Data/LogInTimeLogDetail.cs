@@ -12,26 +12,19 @@ namespace EmployeeAttendance.DAL.Data
     using System;
     using System.Collections.Generic;
     
-    public partial class LoginTime
+    public partial class LogInTimeLogDetail
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public LoginTime()
-        {
-            this.LogInTimeLogDetails = new HashSet<LogInTimeLogDetail>();
-        }
-    
-        public System.Guid LoginTimeId { get; set; }
-        public Nullable<bool> IsDeleted { get; set; }
-        public Nullable<System.DateTime> CreatedOn { get; set; }
         public System.Guid Id { get; set; }
-        public Nullable<System.Guid> ProjectID { get; set; }
-        public Nullable<bool> LeaveStatus { get; set; }
         public Nullable<System.DateTime> TimeIn { get; set; }
         public Nullable<System.DateTime> TimeOut { get; set; }
+        public Nullable<System.Guid> UserLogInTimeId { get; set; }
+        public Nullable<System.Guid> ProjectId { get; set; }
+        public Nullable<bool> IsDeleted { get; set; }
+        public Nullable<System.DateTime> CreatedOn { get; set; }
+        public Nullable<System.Guid> LogInTimeID { get; set; }
     
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<LogInTimeLogDetail> LogInTimeLogDetails { get; set; }
         public virtual Project Project { get; set; }
         public virtual UserLoginDetail UserLoginDetail { get; set; }
+        public virtual LoginTime LoginTime { get; set; }
     }
 }

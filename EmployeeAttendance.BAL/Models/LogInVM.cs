@@ -12,10 +12,14 @@ namespace EmployeeAttendance.BAL.Models
     {
         public DateTime? CreatedOn { get; set; }
         public string Date { get; set; }
+        public string TimeInString { get; set; }
+        public string TimeOutString { get; set; }
         public Guid LoginTimeId { get; set; }  //foreign key with userLoginDetail Id column
-        public TimeSpan? TimeIn { get; set; }
-        public TimeSpan? TimeOut { get; set; }
+        public DateTime? TimeIn { get; set; }
+        public DateTime? TimeOut { get; set; }
+
         public TimeSpan? TotalTime { get; set; }
+
         public System.Guid Id { get; set; }   //Primary key column of Login Times Column
         public Guid? ProjectID { get; set; }
         public string ProjectName { get; set; }

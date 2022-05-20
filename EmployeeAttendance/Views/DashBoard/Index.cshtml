@@ -16,6 +16,7 @@
         <input type="date" name="ToDate" id="endDate" />
         <input type="submit" id="btnSearchData" name="submit" value="Search" />
     </p>
+
 </center>
 
 <div id="partialView">
@@ -33,7 +34,7 @@
         $('#btnSearchData').click(function () {
             var FromDate = $('#startDate').val();
             var ToDate = $('#endDate').val();
-            /*    alert(FromDate);*/
+                //alert(FromDate);
 
             $.ajax({
                 type: "GET",   //POST
@@ -50,81 +51,3 @@
 
     </script>
 }
- @*debugger*@
-                     @*/* window.location.href = "/DashBoard/SearchByDates?FromDate=" + FromDate , "&ToDate=" + ToDate;*/
-                    /*  $("#SearchByDates").html(result)*/
-                   /* + "&para2=" + data2*/*@
-
-
-@*<div id="partialView">
-    </div>
-
-    <link href="~/Content/themes/base/jquery-ui.min.css" rel="stylesheet" />
-    @section Scripts {
-        @Scripts.Render("~/bundles/jqueryval")
-
-        <script src="~/Scripts/jquery-ui-1.12.0.min.js"></script>
-
-        <script type="text/javascript">
-        $(document).ready(function() {
-            $("#partialView").load('@Url.Content("/DashBoard/EmployeeDashBoardList")');
-        });
-        </script>
-        <script>
-            $(document).ready(function () {
-                $(".datepicker").datepicker({
-                    dateFormat: "dd-mm-yy",
-                    changemonth: true,
-                    changeyear: true
-                });
-            });
-        </script>
-        <script>
-            $(document).ready(function () {
-                $(".Datepicker").datepicker({
-                    dateFormat: "dd-mm-yy",
-                    changemonth: true,
-                    changeyear: true
-                });
-            });
-        </script>
-    }*@
-
-
-@*<form>
-
-        @Html.AntiForgeryToken()
-        <br />
-
-
-        <div class="col-sm-6">
-            @Html.LabelFor(model => model.FromDate, new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.FromDate, new { htmlAttributes = new { @class = "datepicker" } })
-                @Html.ValidationMessageFor(model => model.FromDate, "", new { @class = "text-danger" })
-            </div>
-        </div>
-        <div class="col-sm-6">
-            @Html.LabelFor(model => model.ToDate, new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.ToDate, new { htmlAttributes = new { @class = "Datepicker" } })
-                @Html.ValidationMessageFor(model => model.ToDate, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="col-xs-6">
-            <div class="form-group btn-contact">
-                <input type="submit" value="Search" class="btn btn-primary" />
-            </div>
-        </div>
-
-        <div class="form-group">
-                <div class="col-md-offset-2 col-md-10">
-                    <input type="submit" value="Search" class="btn btn-primary" /> &nbsp;
-                </div>
-            </div>
-
-    </form>*@
-
-
-

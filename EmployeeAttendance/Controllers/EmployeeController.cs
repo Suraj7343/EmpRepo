@@ -15,6 +15,7 @@ using System.Web.Mvc;
 using EmployeeAttendance.Common;
 using EmployeeAttendance.WebHelper;
 using System.Data.SqlClient;
+using System.Web.Security;
 
 namespace EmployeeAttendance.Controllers
 {
@@ -61,7 +62,7 @@ namespace EmployeeAttendance.Controllers
             List<LogInVM> model = new List<LogInVM>();
 
             Guid? userId = (Guid?)null;
-            if (Session["LogOut"] != null)
+            if (Session["LogOut"] != null) //When Employee goes to dashboard related to project
             {
                 userId = new Guid(Session["LogOut"].ToString());
                 model = _service.ProjectTotalTimeCount();
@@ -88,9 +89,19 @@ namespace EmployeeAttendance.Controllers
             if (Session[SessionKey.logInTimeTableId] != null)
             {
                 var logInTimeTableId = (Guid)Session[SessionKey.logInTimeTableId];
-                _service.DirectLogOutTime(logInTimeTableId);
+                _service.DirectLogOutTime(logInTimeTableId, userId);
             }
             Session.Abandon();
+
+            Session.RemoveAll();
+
+            FormsAuthentication.SignOut();
+
+
+            this.Response.Cache.SetExpires(DateTime.UtcNow.AddMinutes(-1));
+            this.Response.Cache.SetCacheability(HttpCacheability.NoCache);
+            this.Response.Cache.SetNoStore();
+
             return RedirectToAction("Login", "Home");
         }
 
@@ -135,44 +146,6 @@ namespace EmployeeAttendance.Controllers
             }
             return View();
         }
-
-        //private static List<SelectListItem> PopulateProjects()
-        //{
-        //    List<SelectListItem> items = new List<SelectListItem>();
-
-        //    string abc = ConfigurationManager.ConnectionStrings["EmployeeDetailsDBEntities1"].ConnectionString;
-
-        //    if (abc.ToLower().StartsWith("metadata="))
-        //    {
-        //        System.Data.Entity.Core.EntityClient.EntityConnectionStringBuilder efBuilder = new System.Data.Entity.Core.EntityClient.EntityConnectionStringBuilder(abc);
-
-        //        abc = efBuilder.ProviderConnectionString;
-        //    }
-        //    using (SqlConnection con = new SqlConnection(abc))
-        //    {
-        //        string query = " SELECT ProjectName, ProjectId FROM Project";
-
-        //        using (SqlCommand cmd = new SqlCommand(query))
-        //        {
-        //            cmd.Connection = con;
-        //            con.Open();
-        //            using (SqlDataReader sdr = cmd.ExecuteReader())
-        //            {
-        //                while (sdr.Read())
-        //                {
-        //                    items.Add(new SelectListItem
-        //                    {
-        //                        Text = sdr["ProjectName"].ToString(),
-        //                        Value = sdr["ProjectId"].ToString()
-        //                    });
-        //                }
-        //            }
-        //            con.Close();
-        //        }
-        //    }
-
-        //    return items;
-        //}
 
         public ActionResult Edit(Guid? id)
         {

@@ -35,10 +35,10 @@
 
                             </td>
                             <td>
-                                @Html.DisplayFor(modelItem => item.TimeIn)
+                                @Html.DisplayFor(modelItem => item.TimeInString)
                             </td>
                             <td>
-                                @Html.DisplayFor(modelItem => item.TimeOut)
+                                @Html.DisplayFor(modelItem => item.TimeOutString)
                             </td>
                             <td>
                                 @Html.DisplayFor(modelItem => item.TotalTime)
@@ -61,7 +61,7 @@
                                 }
                             </td>
                             <td>
-                                <input type="button" value="Display" onclick='Disp("@(item.LoginTimeId)")' />
+                                <input type="button" value="Display" onclick='Disp("@(item.Date)")' />
                                 @*@Html.ActionLink("Detail", "TimeRelatedToProject", "DashBoard", new { id = item.LoginTimeId }-->, new { @class = "btn btn-primary" }<!--)*@
                                 @*<button type="button" class="btnDisplayData" data-date-id="@item.Date">Display</button>*@
                                 @*<input type="submit" id="btnDisplayData"  name="submit" data="@(item.Date)" value="Display" />*@
@@ -77,9 +77,11 @@
 
 <div id="openpopup" style="display:none"></div>
 <script>
-    function Disp(LoginTimeId) {
+    function Disp(/*LoginTimeId,*/ Date) {
         var x = $("#openpopup");
-        x.load("/DashBoard/PopUp?LoginTimeId=" + LoginTimeId, function () {
+   /*     alert(Date);*/
+        /*  x.load("/DashBoard/PopUp?LoginTimeId=" + LoginTimeId + "$(Date)" + Date, function () {*/
+        x.load("/DashBoard/PopUp?Date=" + Date, function () {
             x.dialog({
                 show: {
                     effect: "blind",
@@ -101,26 +103,4 @@
 
 
 
-@*<script>
-
-        $('.btnDisplayData').click(function () {
-            debugger
-            var Date = $(this).data('date-id');
-            /*var FromDate = $('#startDate').val();*/
-            /*alert(Date);*/
-            $.ajax({
-                type: "GET",
-                url: "/DashBoard/TimeRelatedToProjec",
-                data: {
-                    Date: Date,
-                },
-                success: function (result) {
-                    window.location.href = "/DashBoard/TimeRelatedToProject?Date=" + result;
-                }
-            });
-        });
-
-    </script>*@
-
-
-
+   

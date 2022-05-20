@@ -87,19 +87,31 @@
           <Property Name="IsDeleted" Type="bit" />
           <Property Name="CreatedOn" Type="datetime" />
         </EntityType>
+        <EntityType Name="LogInTimeLogDetail">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="TimeIn" Type="datetime" />
+          <Property Name="TimeOut" Type="datetime" />
+          <Property Name="UserLogInTimeId" Type="uniqueidentifier" />
+          <Property Name="ProjectId" Type="uniqueidentifier" />
+          <Property Name="IsDeleted" Type="bit" />
+          <Property Name="CreatedOn" Type="datetime" />
+          <Property Name="LogInTimeID" Type="uniqueidentifier" />
+        </EntityType>
         <EntityType Name="LoginTimes">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="LoginTimeId" Type="uniqueidentifier" Nullable="false" />
-          <Property Name="TimeIn" Type="time" Precision="7" />
-          <Property Name="TimeOut" Type="time" Precision="7" />
-          <Property Name="TotalTime" Type="time" Precision="7" />
           <Property Name="IsDeleted" Type="bit" />
           <Property Name="CreatedOn" Type="datetime" />
           <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
           <Property Name="ProjectID" Type="uniqueidentifier" />
           <Property Name="LeaveStatus" Type="bit" />
+          <Property Name="TimeIn" Type="datetime" />
+          <Property Name="TimeOut" Type="datetime" />
         </EntityType>
         <EntityType Name="Project">
           <Key>
@@ -159,6 +171,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK__LogInTime__LogIn__41EDCAC5">
+          <End Role="LoginTimes" Type="Self.LoginTimes" Multiplicity="0..1" />
+          <End Role="LogInTimeLogDetail" Type="Self.LogInTimeLogDetail" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="LoginTimes">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="LogInTimeLogDetail">
+              <PropertyRef Name="LogInTimeID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK__LoginTime__Proje__151B244E">
           <End Role="Project" Type="Self.Project" Multiplicity="0..1" />
           <End Role="LoginTimes" Type="Self.LoginTimes" Multiplicity="*" />
@@ -168,6 +192,30 @@
             </Principal>
             <Dependent Role="LoginTimes">
               <PropertyRef Name="ProjectID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__LogInTime__Proje__3F115E1A">
+          <End Role="Project" Type="Self.Project" Multiplicity="0..1" />
+          <End Role="LogInTimeLogDetail" Type="Self.LogInTimeLogDetail" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Project">
+              <PropertyRef Name="ProjectId" />
+            </Principal>
+            <Dependent Role="LogInTimeLogDetail">
+              <PropertyRef Name="ProjectId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__LogInTime__UserL__40058253">
+          <End Role="UserLoginDetails" Type="Self.UserLoginDetails" Multiplicity="0..1" />
+          <End Role="LogInTimeLogDetail" Type="Self.LogInTimeLogDetail" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="UserLoginDetails">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="LogInTimeLogDetail">
+              <PropertyRef Name="UserLogInTimeId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -250,6 +298,7 @@
           <EntitySet Name="exceptionlog" EntityType="Self.exceptionlog" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Leave" EntityType="Self.Leave" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="LoginPage" EntityType="Self.LoginPage" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="LogInTimeLogDetail" EntityType="Self.LogInTimeLogDetail" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="LoginTimes" EntityType="Self.LoginTimes" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Project" EntityType="Self.Project" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="UserLoginDetails" EntityType="Self.UserLoginDetails" Schema="dbo" store:Type="Tables" />
@@ -262,9 +311,21 @@
             <End Role="UserLoginDetails" EntitySet="UserLoginDetails" />
             <End Role="Leave" EntitySet="Leave" />
           </AssociationSet>
+          <AssociationSet Name="FK__LogInTime__LogIn__41EDCAC5" Association="Self.FK__LogInTime__LogIn__41EDCAC5">
+            <End Role="LoginTimes" EntitySet="LoginTimes" />
+            <End Role="LogInTimeLogDetail" EntitySet="LogInTimeLogDetail" />
+          </AssociationSet>
           <AssociationSet Name="FK__LoginTime__Proje__151B244E" Association="Self.FK__LoginTime__Proje__151B244E">
             <End Role="Project" EntitySet="Project" />
             <End Role="LoginTimes" EntitySet="LoginTimes" />
+          </AssociationSet>
+          <AssociationSet Name="FK__LogInTime__Proje__3F115E1A" Association="Self.FK__LogInTime__Proje__3F115E1A">
+            <End Role="Project" EntitySet="Project" />
+            <End Role="LogInTimeLogDetail" EntitySet="LogInTimeLogDetail" />
+          </AssociationSet>
+          <AssociationSet Name="FK__LogInTime__UserL__40058253" Association="Self.FK__LogInTime__UserL__40058253">
+            <End Role="UserLoginDetails" EntitySet="UserLoginDetails" />
+            <End Role="LogInTimeLogDetail" EntitySet="LogInTimeLogDetail" />
           </AssociationSet>
           <AssociationSet Name="FK__Project__Departm__2739D489" Association="Self.FK__Project__Departm__2739D489">
             <End Role="Department" EntitySet="Department" />
@@ -370,22 +431,6 @@
           <Property Name="IsDeleted" Type="Boolean" />
           <Property Name="CreatedOn" Type="DateTime" Precision="3" />
         </EntityType>
-        <EntityType Name="LoginTime">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="LoginTimeId" Type="Guid" Nullable="false" />
-          <Property Name="TimeIn" Type="Time" Precision="7" />
-          <Property Name="TimeOut" Type="Time" Precision="7" />
-          <Property Name="TotalTime" Type="Time" Precision="7" />
-          <Property Name="IsDeleted" Type="Boolean" />
-          <Property Name="CreatedOn" Type="DateTime" Precision="3" />
-          <Property Name="Id" Type="Guid" Nullable="false" />
-          <NavigationProperty Name="UserLoginDetail" Relationship="Self.FK_Time" FromRole="LoginTimes" ToRole="UserLoginDetails" />
-          <Property Name="ProjectID" Type="Guid" />
-          <NavigationProperty Name="Project" Relationship="EmployeeDetailsDBModel.FK__LoginTime__Proje__151B244E" FromRole="LoginTime" ToRole="Project" />
-          <Property Name="LeaveStatus" Type="Boolean" />
-        </EntityType>
         <EntityType Name="Project">
           <Key>
             <PropertyRef Name="ProjectId" />
@@ -396,9 +441,10 @@
           <Property Name="CreatedOn" Type="DateTime" Precision="3" />
           <NavigationProperty Name="EmployeeDetails" Relationship="Self.FK__EmployeeD__ProjI__20C1E124" FromRole="Project" ToRole="EmployeeDetails" />
           <NavigationProperty Name="WorkingDiagnoses" Relationship="EmployeeDetailsDBModel.FK__WorkingDi__PrjId__08B54D69" FromRole="Project" ToRole="WorkingDiagnose" />
-          <NavigationProperty Name="LoginTimes" Relationship="EmployeeDetailsDBModel.FK__LoginTime__Proje__151B244E" FromRole="Project" ToRole="LoginTime" />
           <Property Name="DepartmentId" Type="Guid" />
           <NavigationProperty Name="Department" Relationship="EmployeeDetailsDBModel.FK__Project__Departm__2739D489" FromRole="Project" ToRole="Department" />
+          <NavigationProperty Name="LogInTimeLogDetails" Relationship="EmployeeDetailsDBModel.FK__LogInTime__Proje__3F115E1A" FromRole="Project" ToRole="LogInTimeLogDetail" />
+          <NavigationProperty Name="LoginTimes" Relationship="EmployeeDetailsDBModel.FK__LoginTime__Proje__151B244E" FromRole="Project" ToRole="LoginTime" />
         </EntityType>
         <EntityType Name="UserLoginDetail">
           <Key>
@@ -411,10 +457,11 @@
           <Property Name="IsDeleted" Type="Boolean" />
           <Property Name="IsAdmin" Type="Boolean" />
           <Property Name="Id" Type="Guid" Nullable="false" />
-          <Property Name="Email" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="EmployeeDetail" Relationship="Self.FK_empId" FromRole="UserLoginDetails" ToRole="EmployeeDetails" />
-          <NavigationProperty Name="LoginTimes" Relationship="Self.FK_Time" FromRole="UserLoginDetails" ToRole="LoginTimes" />
           <NavigationProperty Name="Leaves" Relationship="EmployeeDetailsDBModel.FK__Leave__UserLeave__71D1E811" FromRole="UserLoginDetail" ToRole="Leave" />
+          <NavigationProperty Name="LogInTimeLogDetails" Relationship="EmployeeDetailsDBModel.FK__LogInTime__UserL__40058253" FromRole="UserLoginDetail" ToRole="LogInTimeLogDetail" />
+          <Property Name="Email" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="LoginTimes" Relationship="EmployeeDetailsDBModel.FK_Time" FromRole="UserLoginDetail" ToRole="LoginTime" />
         </EntityType>
         <Association Name="FK__EmployeeD__DepId__1FCDBCEB">
           <End Role="Department" Type="Self.Department" Multiplicity="0..1" />
@@ -452,25 +499,12 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_Time">
-          <End Role="UserLoginDetails" Type="Self.UserLoginDetail" Multiplicity="1" />
-          <End Role="LoginTimes" Type="Self.LoginTime" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="UserLoginDetails">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="LoginTimes">
-              <PropertyRef Name="LoginTimeId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <EntityContainer Name="EmployeeDetailsDBEntities1" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="Departments" EntityType="Self.Department" />
           <EntitySet Name="EmailModels" EntityType="Self.EmailModel" />
           <EntitySet Name="EmployeeDetails" EntityType="Self.EmployeeDetail" />
           <EntitySet Name="exceptionlogs" EntityType="Self.exceptionlog" />
           <EntitySet Name="LoginPages" EntityType="Self.LoginPage" />
-          <EntitySet Name="LoginTimes" EntityType="Self.LoginTime" />
           <EntitySet Name="Projects" EntityType="Self.Project" />
           <EntitySet Name="UserLoginDetails" EntityType="Self.UserLoginDetail" />
           <AssociationSet Name="FK__EmployeeD__DepId__1FCDBCEB" Association="Self.FK__EmployeeD__DepId__1FCDBCEB">
@@ -484,10 +518,6 @@
           <AssociationSet Name="FK_empId" Association="Self.FK_empId">
             <End Role="EmployeeDetails" EntitySet="EmployeeDetails" />
             <End Role="UserLoginDetails" EntitySet="UserLoginDetails" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Time" Association="Self.FK_Time">
-            <End Role="UserLoginDetails" EntitySet="UserLoginDetails" />
-            <End Role="LoginTimes" EntitySet="LoginTimes" />
           </AssociationSet>
           <EntitySet Name="Leaves" EntityType="EmployeeDetailsDBModel.Leave" />
           <AssociationSet Name="FK__Leave__UserLeave__71D1E811" Association="EmployeeDetailsDBModel.FK__Leave__UserLeave__71D1E811">
@@ -507,13 +537,31 @@
             <End Role="Project" EntitySet="Projects" />
             <End Role="WorkingDiagnose" EntitySet="WorkingDiagnoses" />
           </AssociationSet>
+          <AssociationSet Name="FK__Project__Departm__2739D489" Association="EmployeeDetailsDBModel.FK__Project__Departm__2739D489">
+            <End Role="Department" EntitySet="Departments" />
+            <End Role="Project" EntitySet="Projects" />
+          </AssociationSet>
+          <EntitySet Name="LogInTimeLogDetails" EntityType="EmployeeDetailsDBModel.LogInTimeLogDetail" />
+          <AssociationSet Name="FK__LogInTime__Proje__3F115E1A" Association="EmployeeDetailsDBModel.FK__LogInTime__Proje__3F115E1A">
+            <End Role="Project" EntitySet="Projects" />
+            <End Role="LogInTimeLogDetail" EntitySet="LogInTimeLogDetails" />
+          </AssociationSet>
+          <AssociationSet Name="FK__LogInTime__UserL__40058253" Association="EmployeeDetailsDBModel.FK__LogInTime__UserL__40058253">
+            <End Role="UserLoginDetail" EntitySet="UserLoginDetails" />
+            <End Role="LogInTimeLogDetail" EntitySet="LogInTimeLogDetails" />
+          </AssociationSet>
+          <EntitySet Name="LoginTimes" EntityType="EmployeeDetailsDBModel.LoginTime" />
+          <AssociationSet Name="FK__LogInTime__LogIn__41EDCAC5" Association="EmployeeDetailsDBModel.FK__LogInTime__LogIn__41EDCAC5">
+            <End Role="LoginTime" EntitySet="LoginTimes" />
+            <End Role="LogInTimeLogDetail" EntitySet="LogInTimeLogDetails" />
+          </AssociationSet>
           <AssociationSet Name="FK__LoginTime__Proje__151B244E" Association="EmployeeDetailsDBModel.FK__LoginTime__Proje__151B244E">
             <End Role="Project" EntitySet="Projects" />
             <End Role="LoginTime" EntitySet="LoginTimes" />
           </AssociationSet>
-          <AssociationSet Name="FK__Project__Departm__2739D489" Association="EmployeeDetailsDBModel.FK__Project__Departm__2739D489">
-            <End Role="Department" EntitySet="Departments" />
-            <End Role="Project" EntitySet="Projects" />
+          <AssociationSet Name="FK_Time" Association="EmployeeDetailsDBModel.FK_Time">
+            <End Role="UserLoginDetail" EntitySet="UserLoginDetails" />
+            <End Role="LoginTime" EntitySet="LoginTimes" />
           </AssociationSet>
         </EntityContainer>
         <EntityType Name="Leave">
@@ -593,6 +641,86 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK__Project__Departm__2739D489">
+          <End Type="EmployeeDetailsDBModel.Department" Role="Department" Multiplicity="0..1" />
+          <End Type="EmployeeDetailsDBModel.Project" Role="Project" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Department">
+              <PropertyRef Name="DepartmentId" />
+            </Principal>
+            <Dependent Role="Project">
+              <PropertyRef Name="DepartmentId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="LogInTimeLogDetail">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Guid" Nullable="false" />
+          <Property Name="TimeIn" Type="DateTime" Precision="3" />
+          <Property Name="TimeOut" Type="DateTime" Precision="3" />
+          <Property Name="UserLogInTimeId" Type="Guid" />
+          <Property Name="ProjectId" Type="Guid" />
+          <Property Name="IsDeleted" Type="Boolean" />
+          <Property Name="CreatedOn" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="Project" Relationship="EmployeeDetailsDBModel.FK__LogInTime__Proje__3F115E1A" FromRole="LogInTimeLogDetail" ToRole="Project" />
+          <NavigationProperty Name="UserLoginDetail" Relationship="EmployeeDetailsDBModel.FK__LogInTime__UserL__40058253" FromRole="LogInTimeLogDetail" ToRole="UserLoginDetail" />
+          <Property Name="LogInTimeID" Type="Guid" />
+          <NavigationProperty Name="LoginTime" Relationship="EmployeeDetailsDBModel.FK__LogInTime__LogIn__41EDCAC5" FromRole="LogInTimeLogDetail" ToRole="LoginTime" />
+        </EntityType>
+        <Association Name="FK__LogInTime__Proje__3F115E1A">
+          <End Type="EmployeeDetailsDBModel.Project" Role="Project" Multiplicity="0..1" />
+          <End Type="EmployeeDetailsDBModel.LogInTimeLogDetail" Role="LogInTimeLogDetail" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Project">
+              <PropertyRef Name="ProjectId" />
+            </Principal>
+            <Dependent Role="LogInTimeLogDetail">
+              <PropertyRef Name="ProjectId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__LogInTime__UserL__40058253">
+          <End Type="EmployeeDetailsDBModel.UserLoginDetail" Role="UserLoginDetail" Multiplicity="0..1" />
+          <End Type="EmployeeDetailsDBModel.LogInTimeLogDetail" Role="LogInTimeLogDetail" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="UserLoginDetail">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="LogInTimeLogDetail">
+              <PropertyRef Name="UserLogInTimeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="LoginTime">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="LoginTimeId" Type="Guid" Nullable="false" />
+          <Property Name="IsDeleted" Type="Boolean" />
+          <Property Name="CreatedOn" Type="DateTime" Precision="3" />
+          <Property Name="Id" Type="Guid" Nullable="false" />
+          <Property Name="ProjectID" Type="Guid" />
+          <Property Name="LeaveStatus" Type="Boolean" />
+          <Property Name="TimeIn" Type="DateTime" Precision="3" />
+          <Property Name="TimeOut" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="LogInTimeLogDetails" Relationship="EmployeeDetailsDBModel.FK__LogInTime__LogIn__41EDCAC5" FromRole="LoginTime" ToRole="LogInTimeLogDetail" />
+          <NavigationProperty Name="Project" Relationship="EmployeeDetailsDBModel.FK__LoginTime__Proje__151B244E" FromRole="LoginTime" ToRole="Project" />
+          <NavigationProperty Name="UserLoginDetail" Relationship="EmployeeDetailsDBModel.FK_Time" FromRole="LoginTime" ToRole="UserLoginDetail" />
+        </EntityType>
+        <Association Name="FK__LogInTime__LogIn__41EDCAC5">
+          <End Type="EmployeeDetailsDBModel.LoginTime" Role="LoginTime" Multiplicity="0..1" />
+          <End Type="EmployeeDetailsDBModel.LogInTimeLogDetail" Role="LogInTimeLogDetail" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="LoginTime">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="LogInTimeLogDetail">
+              <PropertyRef Name="LogInTimeID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK__LoginTime__Proje__151B244E">
           <End Type="EmployeeDetailsDBModel.Project" Role="Project" Multiplicity="0..1" />
           <End Type="EmployeeDetailsDBModel.LoginTime" Role="LoginTime" Multiplicity="*" />
@@ -605,15 +733,15 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Project__Departm__2739D489">
-          <End Type="EmployeeDetailsDBModel.Department" Role="Department" Multiplicity="0..1" />
-          <End Type="EmployeeDetailsDBModel.Project" Role="Project" Multiplicity="*" />
+        <Association Name="FK_Time">
+          <End Type="EmployeeDetailsDBModel.UserLoginDetail" Role="UserLoginDetail" Multiplicity="1" />
+          <End Type="EmployeeDetailsDBModel.LoginTime" Role="LoginTime" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="Department">
-              <PropertyRef Name="DepartmentId" />
+            <Principal Role="UserLoginDetail">
+              <PropertyRef Name="Id" />
             </Principal>
-            <Dependent Role="Project">
-              <PropertyRef Name="DepartmentId" />
+            <Dependent Role="LoginTime">
+              <PropertyRef Name="LoginTimeId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -696,21 +824,6 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="LoginTimes">
-            <EntityTypeMapping TypeName="EmployeeDetailsDBModel.LoginTime">
-              <MappingFragment StoreEntitySet="LoginTimes">
-                <ScalarProperty Name="LeaveStatus" ColumnName="LeaveStatus" />
-                <ScalarProperty Name="ProjectID" ColumnName="ProjectID" />
-                <ScalarProperty Name="LoginTimeId" ColumnName="LoginTimeId" />
-                <ScalarProperty Name="TimeIn" ColumnName="TimeIn" />
-                <ScalarProperty Name="TimeOut" ColumnName="TimeOut" />
-                <ScalarProperty Name="TotalTime" ColumnName="TotalTime" />
-                <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
-                <ScalarProperty Name="CreatedOn" ColumnName="CreatedOn" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="Projects">
             <EntityTypeMapping TypeName="EmployeeDetailsDBModel.Project">
               <MappingFragment StoreEntitySet="Project">
@@ -725,6 +838,7 @@
           <EntitySetMapping Name="UserLoginDetails">
             <EntityTypeMapping TypeName="EmployeeDetailsDBModel.UserLoginDetail">
               <MappingFragment StoreEntitySet="UserLoginDetails">
+                <ScalarProperty Name="Email" ColumnName="Email" />
                 <ScalarProperty Name="UserLoginDetailsId" ColumnName="UserLoginDetailsId" />
                 <ScalarProperty Name="UserName" ColumnName="UserName" />
                 <ScalarProperty Name="Password" ColumnName="Password" />
@@ -732,7 +846,6 @@
                 <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
                 <ScalarProperty Name="IsAdmin" ColumnName="IsAdmin" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="Email" ColumnName="Email" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -760,6 +873,34 @@
                 <ScalarProperty Name="DeptId" ColumnName="DeptId" />
                 <ScalarProperty Name="EmpId" ColumnName="EmpId" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="LogInTimeLogDetails">
+            <EntityTypeMapping TypeName="EmployeeDetailsDBModel.LogInTimeLogDetail">
+              <MappingFragment StoreEntitySet="LogInTimeLogDetail">
+                <ScalarProperty Name="LogInTimeID" ColumnName="LogInTimeID" />
+                <ScalarProperty Name="CreatedOn" ColumnName="CreatedOn" />
+                <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
+                <ScalarProperty Name="ProjectId" ColumnName="ProjectId" />
+                <ScalarProperty Name="UserLogInTimeId" ColumnName="UserLogInTimeId" />
+                <ScalarProperty Name="TimeOut" ColumnName="TimeOut" />
+                <ScalarProperty Name="TimeIn" ColumnName="TimeIn" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="LoginTimes">
+            <EntityTypeMapping TypeName="EmployeeDetailsDBModel.LoginTime">
+              <MappingFragment StoreEntitySet="LoginTimes">
+                <ScalarProperty Name="TimeOut" ColumnName="TimeOut" />
+                <ScalarProperty Name="TimeIn" ColumnName="TimeIn" />
+                <ScalarProperty Name="LeaveStatus" ColumnName="LeaveStatus" />
+                <ScalarProperty Name="ProjectID" ColumnName="ProjectID" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="CreatedOn" ColumnName="CreatedOn" />
+                <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
+                <ScalarProperty Name="LoginTimeId" ColumnName="LoginTimeId" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

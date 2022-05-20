@@ -37,8 +37,12 @@ namespace EmployeeAttendance.BAL.Models
         public string ProjectName { get; set; }
         public string DepartmentName { get; set; }
         public string MsgForLeave { get; set; }
-        public TimeSpan? TimeIn { get; set; }
-        public TimeSpan? TimeOut { get; set; }
+        //public TimeSpan? TimeIn { get; set; }
+        public DateTime? TimeIn { get; set; }
+        //public TimeSpan? TimeOut { get; set; }
+        public string TimeInString { get; set; }
+        public DateTime? TimeOut { get; set; }
+        public string TimeOutString { get; set; }
         public TimeSpan? TotalTime { get; set; }
         public Guid? ProjectID { get; set; }
     }

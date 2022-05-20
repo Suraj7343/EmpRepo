@@ -27,14 +27,6 @@ namespace EmployeeAttendance.Controllers
             return View();  
         }
 
-        //[HttpPost]
-        //public JsonResult SearchDates(DateTime? FromDate, DateTime? ToDate)
-        //{
-        //    //Session["ToDate"] = ToDate;
-        //    var result = new { FromDate, ToDate };
-        //    return Json(result);
-        //}
-
         public ActionResult SearchByDates(DateTime? FromDate, DateTime? ToDate)
         {
             List<LogInVM> data = new List<LogInVM>();
@@ -43,39 +35,23 @@ namespace EmployeeAttendance.Controllers
 
             data = _service.EmployeeDashBoardList(userId, FromDate, ToDate);
             return PartialView("_EmployeeDashBoard", data);
-            //model = _service.SearchByDate(FromDate, ToDate);
-            //return PartialView("_EmployeeDashBoard", model);
-            //return View(model);
-            //return View();
         }
 
-        //[HttpPost]
         [HttpGet]
         public JsonResult TimeRelatedToProjec(DateTime? Date)
         {
             return Json(Date);
         }
 
-        //public ActionResult TimeRelatedToProject(DateTime? Date)
-        //{
-        //    List<LogInVM> model = new List<LogInVM>();
-
-        //    var userId = new Guid(Session[SessionKey.userId].ToString());
-        //    model = _service.TimeRelatedToProject(userId, Date);
-        //    return View(model);
-        //}
-
         [HttpGet]
-        public ActionResult PopUp(/*DateTime? Date,*/ Guid LoginTimeId)
+        public ActionResult PopUp(string Date/*, Guid LoginTimeId*/)
         {
             List<LogInVM> model = new List<LogInVM>();
 
-            //var userId = new Guid(Session[SessionKey.userId].ToString());
-            model = _service.TimeRelatedToProject(LoginTimeId/*, Date*/);
+            var LoginTimeId = new Guid(Session[SessionKey.userId].ToString());
+            model = _service.TimeRelatedToProject(LoginTimeId, Date); //List of Time picked on the basis of created on
             return PartialView("PopUp", model);
         }
-
-
 
         public ActionResult SearchByDate()
         {
@@ -103,33 +79,25 @@ namespace EmployeeAttendance.Controllers
             return View(Session["Data"]);
         }
 
-        //public ActionResult EmployeeDashBoardList()
-        //{
-        //    List<LogInVM> data = new List<LogInVM>();
-        //    //var userId = (Guid)Session[SessionKey.userId];
-        //    var userId = new Guid(Session[SessionKey.userId].ToString());
-
-        //    data = _service.EmployeeDashBoardList(userId);
-
-        //    return PartialView("_EmployeeDashBoard", data);
-        //}
-
         /// <summary>
         /// Time count ends 
         /// controller-DashBoardRelatedToProject
         /// BackToIndex
         /// </summary>
         /// <returns></returns>
+       
         public ActionResult TimeCount()
         {
             _service.TotalTimeCount();
             return RedirectToAction(nameof(Index));
         }
+
         /// <summary>
         /// Multiple checkboxes(Employee- switch to project by this)
         /// </summary>
         /// <param name="projectId">Id related to project i.e id of that project to which employee clicked</param>
         /// <returns>Next Page</returns>
+      
         public JsonResult UpdateCheckBox(Guid projectId)
         {
             //var userId = new Guid(Session["LogOut"].ToString());
@@ -191,40 +159,3 @@ namespace EmployeeAttendance.Controllers
         }
     }
 }
-
-
-
-#region MyRegion
-
-//public ActionResult GetData() //LogInVM logInVM
-//{
-//    var xyz = _service.DashBoard();
-
-//    List<string> days = new List<string>();
-//    foreach (DayOfWeek day in Enum.GetValues(typeof(DayOfWeek))
-//                      .OfType<DayOfWeek>()
-//                      .ToList()
-//                      .Skip(1))
-//    {
-//        days.Add(day.ToString());
-//    }
-
-//    days.Add(DateTime.Now.DayOfWeek.ToString());
-
-//    ViewBag.days = DateTime.Now.DayOfWeek;
-
-//    LoginTime loginTime = new LoginTime();
-
-//    loginTime.TotalTime = (TimeSpan?)Session["Count"];
-
-//    var abc = loginTime.TotalTime.ToString();
-
-//    var query = _context.LoginTimes.Where(x => x.TotalTime == xyz.TotalTime && x.CreatedOn == xyz.CreatedOn)/*.Where(x => x.LoginTimeId == xyz.LoginTimeId)
-//           .GroupBy(p => p.UserLoginDetail.UserName)
-//           .Select(g => new { name = g.Key, count = /*days*/loginTime.TotalTime.ToString()  /*count = loginTime.TotalTime*/ })
-//           .ToList();  //count = loginTime.TotalTime
-
-//    return Json(query, JsonRequestBehavior.AllowGet);
-
-//}
-#endregion

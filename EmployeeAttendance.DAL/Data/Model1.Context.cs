@@ -30,10 +30,11 @@ namespace EmployeeAttendance.DAL.Data
         public virtual DbSet<EmployeeDetail> EmployeeDetails { get; set; }
         public virtual DbSet<exceptionlog> exceptionlogs { get; set; }
         public virtual DbSet<LoginPage> LoginPages { get; set; }
-        public virtual DbSet<LoginTime> LoginTimes { get; set; }
         public virtual DbSet<Project> Projects { get; set; }
         public virtual DbSet<UserLoginDetail> UserLoginDetails { get; set; }
         public virtual DbSet<Leave> Leaves { get; set; }
         public virtual DbSet<WorkingDiagnose> WorkingDiagnoses { get; set; }
+        public virtual DbSet<LogInTimeLogDetail> LogInTimeLogDetails { get; set; }
+        public virtual DbSet<LoginTime> LoginTimes { get; set; }
     }
 }
