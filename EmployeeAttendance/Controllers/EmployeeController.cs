@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data.Entity;
-using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -15,11 +14,15 @@ using System.Web;
 using System.Web.Mvc;
 using EmployeeAttendance.Common;
 using EmployeeAttendance.WebHelper;
+using System.Data.SqlClient;
+using System.Web.Security;
 
 namespace EmployeeAttendance.Controllers
+
 {
     public class EmployeeController : Controller
     {
+
         // GET: Employee
         private readonly RegistrationService _service;
 
@@ -33,12 +36,38 @@ namespace EmployeeAttendance.Controllers
             return View();
         }
 
+        //public ActionResult Index(string sortOrder, string CurrentSort, int? page)
+        //{
+        //    var result = _service.Pagination(sortOrder, CurrentSort, page);
+        //    return View(result);
+        //}
+
+
+        public ActionResult SearchByName(string sortOrder, string CurrentSort, int? page, string Search)
+        {
+              var result = _service.Pagination(sortOrder, CurrentSort, page, Search);
+              return PartialView("_SearchingPartial", result);
+        }
+
+        public ActionResult TotalTimeOfEmployees(string Search)
+        {
+            var leave = _service.TotalTimeOfEmployees(Search);
+            return View(leave);
+        }
+
+        [HttpPost]
+        public JsonResult MultiSelectEmail(List<string> email)   //employeeId
+        {
+            string JoinDataString = string.Join(",", email.ToArray());
+            return Json(JoinDataString);
+        }
+
         public ActionResult PopUp()
         {
             List<LogInVM> model = new List<LogInVM>();
 
             Guid? userId = (Guid?)null;
-            if (Session["LogOut"] != null)
+            if (Session["LogOut"] != null) //When Employee goes to dashboard related to project
             {
                 userId = new Guid(Session["LogOut"].ToString());
                 model = _service.ProjectTotalTimeCount();
@@ -65,9 +94,19 @@ namespace EmployeeAttendance.Controllers
             if (Session[SessionKey.logInTimeTableId] != null)
             {
                 var logInTimeTableId = (Guid)Session[SessionKey.logInTimeTableId];
-                _service.DirectLogOutTime(logInTimeTableId);
+                _service.DirectLogOutTime(logInTimeTableId, userId);
             }
+
+            Session.Clear();
             Session.Abandon();
+            Session.RemoveAll();
+
+            FormsAuthentication.SignOut();
+
+            this.Response.Cache.SetExpires(DateTime.UtcNow.AddMinutes(-1));
+            this.Response.Cache.SetCacheability(HttpCacheability.NoCache);
+            this.Response.Cache.SetNoStore();
+
             return RedirectToAction("Login", "Home");
         }
 
@@ -113,58 +152,6 @@ namespace EmployeeAttendance.Controllers
             return View();
         }
 
-        private static List<SelectListItem> PopulateProjects()
-        {
-            List<SelectListItem> items = new List<SelectListItem>();
-
-            string abc = ConfigurationManager.ConnectionStrings["EmployeeDetailsDBEntities1"].ConnectionString;
-
-            if (abc.ToLower().StartsWith("metadata="))
-            {
-                System.Data.Entity.Core.EntityClient.EntityConnectionStringBuilder efBuilder = new System.Data.Entity.Core.EntityClient.EntityConnectionStringBuilder(abc);
-
-                abc = efBuilder.ProviderConnectionString;
-            }
-            using (SqlConnection con = new SqlConnection(abc))
-            {
-                string query = " SELECT ProjectName, ProjectId FROM Project";
-
-                using (SqlCommand cmd = new SqlCommand(query))
-                {
-                    cmd.Connection = con;
-                    con.Open();
-                    using (SqlDataReader sdr = cmd.ExecuteReader())
-                    {
-                        while (sdr.Read())
-                        {
-                            items.Add(new SelectListItem
-                            {
-                                Text = sdr["ProjectName"].ToString(),
-                                Value = sdr["ProjectId"].ToString()
-                            });
-                        }
-                    }
-                    con.Close();
-                }
-            }
-
-            return items;
-        }
-
-        //for Searching     
-        public ActionResult Display()
-        {
-            var data = _service.GetEmployee();
-            return View(data);
-        }
-
-        [HttpPost]
-        public ActionResult Display(string Search)
-        {
-            var data = _service.FindData(Search);
-            return View(data);
-        }
-
         public ActionResult Edit(Guid? id)
         {
             if (id == null)
@@ -184,37 +171,35 @@ namespace EmployeeAttendance.Controllers
         {
             try
             {
-                if (ModelState.IsValid)
+                if (file != null)
                 {
-                    if (file != null)
+                    string filename = Path.GetFileName(file.FileName);
+                    string _filename = DateTime.Now.ToString("yymmssfff") + filename;
+                    string extenion = Path.GetExtension(file.FileName);
+                    string path = Path.Combine(Server.MapPath("~/images/"), _filename);
+                    emp.EmployeeImage = "~/images/" + _filename;
+
+                    if (extenion.ToLower() == Constants.JPG || extenion.ToLower() == Constants.JPEG || extenion.ToLower() == Constants.PNG)
                     {
-                        string filename = Path.GetFileName(file.FileName);
-                        string _filename = DateTime.Now.ToString("yymmssfff") + filename;
-                        string extenion = Path.GetExtension(file.FileName);
-                        string path = Path.Combine(Server.MapPath("~/images/"), _filename);
-                        emp.EmployeeImage = "~/images/" + _filename;
-
-                        if (extenion.ToLower() == Constants.JPG || extenion.ToLower() == Constants.JPEG || extenion.ToLower() == Constants.PNG)
+                        if (file.ContentLength <= 1000000)
                         {
-                            if (file.ContentLength <= 1000000)
-                            {
-                                string oldImagePath = Request.MapPath(Session[SessionKey.ImagesPath].ToString());
+                            string oldImagePath = Request.MapPath(Session[SessionKey.ImagesPath].ToString());
+                            ViewBag.DepartmentList = _service.GetDepartmentList();
+                            bool modal = _service.UpdateEmployeeList(emp, oldImagePath);
 
-                                bool modal = _service.UpdateEmployeeList(emp, oldImagePath);
-
-                                file.SaveAs(path);
-                                #region MyRegion
-                                //if (System.IO.File.Exists(oldImagePath))
-                                //{
-                                //    System.IO.File.Delete(oldImagePath);
-                                //}
-                                //_context.Entry(employee).State = EntityState.Modified;
-                                #endregion
-                                return RedirectToAction(nameof(Details), new { id = emp.EmployeeId });
-                            }
+                            file.SaveAs(path);
+                            #region MyRegion
+                            //if (System.IO.File.Exists(oldImagePath))
+                            //{
+                            //    System.IO.File.Delete(oldImagePath);
+                            //}
+                            //_context.Entry(employee).State = EntityState.Modified;
+                            #endregion
+                            return RedirectToAction(nameof(Details), new { id = emp.EmployeeId });
                         }
                     }
                 }
+
                 else
                 {
                     ViewBag.DepartmentList = _service.GetDepartmentList();
@@ -223,6 +208,7 @@ namespace EmployeeAttendance.Controllers
                     bool modal = _service.UpdateEmployeeList(emp, oldImagePath);
                     return RedirectToAction(nameof(Details), new { id = emp.EmployeeId });
                 }
+
             }
             catch (Exception ex)
             {
@@ -234,7 +220,7 @@ namespace EmployeeAttendance.Controllers
         public ActionResult Delete(Guid id)
         {
             bool data = _service.DeleteData(id);
-            return RedirectToAction(nameof(Display));
+            return RedirectToAction(nameof(Index));
         }
 
         #region ProjectAssignedToEmployee
@@ -243,8 +229,12 @@ namespace EmployeeAttendance.Controllers
 
         public ActionResult Details(Guid id)
         {
+            List<DepartmentVM> model = new List<DepartmentVM>();
+            model = _service.DepartmentAssignedToEmployee(id);
+
+            //ViewBag.DepartmentList = model;
             ViewBag.DepartmentList = _service.GetDepartmentList();
-            ViewBag.ProjectList = _service.GetProjectOfEmployee();  //MultiSelect
+            ViewBag.ProjectList = _service.GetProjectOfEmployee(id);  //MultiSelect
             ViewBag.Projects = _service.ProjectAssigned(id);
 
             EmployeeVM employeeVM = _service.Detail(id);
@@ -277,13 +267,13 @@ namespace EmployeeAttendance.Controllers
             try
             {
                 if (id != null)
-                using (EmployeeDetailsDBEntities1 _context = new EmployeeDetailsDBEntities1())
-                {
-                    var result = _context.EmployeeDetails.FirstOrDefault(x => x.EmployeeId == id);
+                    using (EmployeeDetailsDBEntities1 _context = new EmployeeDetailsDBEntities1())
+                    {
+                        var result = _context.EmployeeDetails.FirstOrDefault(x => x.EmployeeId == id);
 
-                    Session["result"] = result.Email;
-                    return RedirectToAction("SendMail", new { result });
-                }
+                        Session["result"] = result.Email;
+                        return RedirectToAction("SendMail", new { result });
+                    }
             }
             catch (Exception ex)
             {
@@ -292,47 +282,22 @@ namespace EmployeeAttendance.Controllers
             return View();
         }
 
-        public ActionResult SendMail()
+        [HttpGet]
+        public ActionResult SendMail(List<string> email)
         {
-            return View();
+            EmailModelVM model = new EmailModelVM();
+            if (email != null)
+            {
+                model.EmailTo = string.Join(",", email.ToArray());
+            }
+            return View(model);
         }
 
         [HttpPost]
         public ActionResult SendMail(EmailModelVM model)
         {
-            try
-            {
-                model.EmailTo = Session["result"].ToString();
-
-                using (MailMessage mm = new MailMessage(model.SenderEmail, model.EmailTo))
-                {
-                    mm.Subject = model.Subject;
-                    mm.Body = model.Body;
-                    mm.IsBodyHtml = false;
-                    SmtpClient smtp = new SmtpClient();
-                    smtp.Host = "smtp.gmail.com";
-                    smtp.EnableSsl = true;
-
-                    NetworkCredential NetworkCred = new NetworkCredential("singhpalwinder8624@gmail.com", "Purewal@0001");
-
-                    smtp.UseDefaultCredentials = true;
-                    smtp.Credentials = NetworkCred;
-                    smtp.Port = 587;
-                    smtp.Send(mm);
-
-                    string[] Multi = model.EmailTo.Split(',');
-                    foreach (var item in Multi)
-                    {
-                        mm.To.Add(new MailAddress(item));
-                    }
-                    Session["Success"] = "SENT SUCCESSFULLY";
-                }
-            }
-            catch (Exception ex)
-            {
-                ExceptionService.SaveException(ex);
-            }
-            return View();
+            bool result = _service.SendMailSmtp(model);
+            return RedirectToAction(nameof(Index));
         }
 
         #region Notification
@@ -394,10 +359,5 @@ namespace EmployeeAttendance.Controllers
             return View(leave);
         }
 
-        public ActionResult TotalTimeOfEmployees(string Search)
-        {
-            var leave = _service.TotalTimeOfEmployees(Search);
-            return View(leave);
-        }
     }
 }

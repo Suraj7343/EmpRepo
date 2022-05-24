@@ -1,6 +1,6 @@
-﻿@model IEnumerable<EmployeeAttendance.BAL.Models.DepartmentVM>
+﻿@model IEnumerable<EmployeeAttendance.BAL.Models.ProjectVM>
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Projects";
 }
 <br />
 <br />
@@ -9,26 +9,27 @@
         <a class="btn btn-primary" href="/Employee/Index"><</a>
     </div>
 </div>
-<br />
+ <br />
 <br />
 <div class="panel panel-primary">
     <div class="panel-heading">
-        <h1 class="panel-title text-center">Department</h1>
+        <h1 class="panel-title text-center">Project</h1>
     </div>
     <div class="panel-body">
         <div class="form-group">
             <div class="col-md-6">
-                @*@Html.ActionLink("Logout", "LogOff", "Employee" ,new { @class = "btn btn-primary" })*@
-                <a class="btn btn-primary" href="/DepartmentAndProject/CreateDepartment">Create New Department</a>
+                <a class="btn btn-primary" href="/DepartmentAndProject/ProjectManagement">Create New Project</a>
             </div>
         </div>
         <div class="jumbotron">
             <div class="">
                 <table class="table text-justify">
                     <tr>
-
                         <th>
-                            DepartmentName
+                            Project Name
+                        </th>
+                        <th>
+                            Department Name
                         </th>
 
                         <th>Actions</th>
@@ -38,16 +39,18 @@
                     @foreach (var item in Model)
                     {
                         <tr>
-
                             <td>
-                                @Html.DisplayFor(modelItem => item.DepartmentName)
+                                @Html.DisplayFor(modelItem => item.ProjectName)
+                                @Html.HiddenFor(modelItem => item.ProjectId)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.DepName)
                                 @Html.HiddenFor(modelItem => item.DepartmentId)
                             </td>
 
-
                             <td>
-                                @Html.ActionLink("Edit", "Edit", new { id = item.DepartmentId }) |
-                                @Html.ActionLink("Delete", "Delete", new { id = item.DepartmentId }, new { onclick = "return confirm('want to delete?')" })
+                                @Html.ActionLink("Edit", "EditProject", new { id = item.ProjectId }) |
+                                @Html.ActionLink("Delete", "DeleteProject", new { id = item.ProjectId }, new { onclick = "return confirm('want to delete?')" })
                             </td>
                         </tr>
 
@@ -58,8 +61,5 @@
         </div>
     </div>
 </div>
-@*<div class="form-group">
-        <a class="btn btn-primary" href="/Employee/Index">BackToList</a>
 
-        @Html.ActionLink("Back To Index", "Index", "Employee", new { @class = "btn btn-primary" })
-    </div>*@
+

@@ -4,6 +4,13 @@
 }
 <br />
 <br />
+<div class="form-group btn-contact">
+    <div class="col-md-6">
+        <a class="btn btn-primary" href="/Employee/Index"><</a>
+    </div>
+</div>
+<br />
+<br />
 <div class="panel panel-primary">
     <div class="panel-heading">
         <h1 class="panel-title text-center">Apply For Leave</h1>
@@ -18,8 +25,8 @@
                         <th>StartDate</th>
                         <th>EndDate</th>
                         <th>Reason</th>
-                        <th>Approve</th>
-                        <th>Reject</th>
+                        @*<th>Approve</th>
+                        <th>Reject</th>*@
                         <th>Actions</th>
                     </tr>
 
@@ -41,15 +48,15 @@
                             <td class="text-success">
                                 @Html.DisplayFor(modelItem => item.Reason)
                             </td>
-                            <td>
+                            @*<td>
                                 @Html.DisplayFor(modelItem => item.Approve)
                             </td>
                             <td>
                                 @Html.DisplayFor(modelItem => item.Reject)
-                            </td>
+                            </td>*@
                             <td>
                                 @Html.ActionLink("Details", "LeaveDetails", new { id = item.Id }) |
-                                @Html.ActionLink("UpdateStatus", "ApproveRejectRequest", new { id = item.Id })
+                                @Html.ActionLink("ApproveOrReject", "ApproveRejectRequest", new { id = item.Id })
                             </td>
                         </tr>
                     }

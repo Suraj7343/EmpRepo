@@ -61,73 +61,27 @@ namespace EmployeeAttendance.BAL.Models
        
         public string UserName { get; set; }
         public string Message { get; set; }
-        public TimeSpan? TimeIn { get; set; }
-        public TimeSpan? TimeOut { get; set; }
+        //public TimeSpan? TimeIn { get; set; }
+        public DateTime? TimeIn { get; set; }
+        //public TimeSpan? TimeOut { get; set; }
+
+        public string TimeInString { get; set; }
+
+        public DateTime? TimeOut { get; set; }
+        //public TimeSpan? TotalTime { get; set; }
+
+        public string TimeOutString { get; set; }
+
         public TimeSpan? TotalTime { get; set; }
         public bool IsChecked { get; set; }
         public Guid? PrjId { get; set; }
+
         public DateTime? JoiningDate { get; set; }
         public virtual EmployeeDetail EmployeeDetail { get; set; }
         public virtual ICollection<Leave> Leaves { get; set; }
         public virtual ICollection<EmployeeDetail> EmployeeDetails { get; set; }
         public virtual UserLoginDetail UserLoginDetail { get; set; }
         public virtual ICollection<UserLoginDetail> UserLoginDetails { get; set; }
-        #region MyRegion
-
-        //public string Password { get; set; }
-
-        //public System.Guid UserLoginDetailsId { get; set; }
-
-
-        //public System.Guid LoginTimeId { get; set; } 
-
-        //public System.Guid DepartmentId { get; set; }
-
-        //public string LeaveStatus { get; set; }
-
-        //public List<SelectListItem> Projects { get; set; }
-
-        //public int[] ProjectIds { get; set; }
-
-        //public DateTime? RelievingDate { get; set; }
-
-        //public Guid? EmpId { get; set; }
-
-        //public Guid? DeptId { get; set; }
-
-        //public string PName { get; set; }
-
-        //public List<Project> GetProjectList { get; set; }
-
-        //public virtual Department Department { get; set; }
-
-        //public virtual Project Project { get; set; }
-
-        //public System.Guid Id { get; set; }
-
-        //[Required]
-        //[DataType(DataType.Date)]
-        //public DateTime? StartDate { get; set; }
-
-        //[Required]
-        //[DataType(DataType.Date)]
-        //public DateTime? EndDate { get; set; }
-
-        //public bool Approve { get; set; }
-
-        //public bool Reject { get; set; }
-
-        //public Guid? UserLeaveId { get; set; }
-
-        //public string Reason { get; set; }
-
-        //Project
-
-        //public bool? IsAdmin { get; set; }
-
-        //public Guid ProjectId { get; set; }
-
-        //public Guid PId { get; set; }
-        #endregion
+ 
     }
 }

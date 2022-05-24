@@ -19,6 +19,7 @@ namespace EmployeeAttendance.DAL.Data
         {
             this.EmployeeDetails = new HashSet<EmployeeDetail>();
             this.WorkingDiagnoses = new HashSet<WorkingDiagnose>();
+            this.LogInTimeLogDetails = new HashSet<LogInTimeLogDetail>();
             this.LoginTimes = new HashSet<LoginTime>();
         }
     
@@ -26,11 +27,15 @@ namespace EmployeeAttendance.DAL.Data
         public string ProjectName { get; set; }
         public Nullable<bool> IsDeleted { get; set; }
         public Nullable<System.DateTime> CreatedOn { get; set; }
+        public Nullable<System.Guid> DepartmentId { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<EmployeeDetail> EmployeeDetails { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<WorkingDiagnose> WorkingDiagnoses { get; set; }
+        public virtual Department Department { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<LogInTimeLogDetail> LogInTimeLogDetails { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<LoginTime> LoginTimes { get; set; }
     }

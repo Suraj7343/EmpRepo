@@ -17,8 +17,9 @@ namespace EmployeeAttendance.DAL.Data
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public UserLoginDetail()
         {
-            this.LoginTimes = new HashSet<LoginTime>();
             this.Leaves = new HashSet<Leave>();
+            this.LogInTimeLogDetails = new HashSet<LogInTimeLogDetail>();
+            this.LoginTimes = new HashSet<LoginTime>();
         }
     
         public System.Guid UserLoginDetailsId { get; set; }
@@ -32,8 +33,10 @@ namespace EmployeeAttendance.DAL.Data
     
         public virtual EmployeeDetail EmployeeDetail { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<LoginTime> LoginTimes { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Leave> Leaves { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<LogInTimeLogDetail> LogInTimeLogDetails { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<LoginTime> LoginTimes { get; set; }
     }
 }

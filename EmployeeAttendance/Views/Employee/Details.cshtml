@@ -20,26 +20,28 @@
                             <dt>
                                 ProjectAssigned
                             </dt>
-                            <div>
-                                <table>
-                                    @if (ViewBag.Projects != null)
-                                    {
-                                        foreach (var item in ViewBag.Projects)
+                            <td>
+                                <div>
+                                    <table>
+                                        @if (ViewBag.Projects != null)
                                         {
-                                            <tr>
-                                                <td>
-                                                    @item.ProjectName
+                                            foreach (var item in ViewBag.Projects)
+                                            {
+                                                <tr>
+                                                    <td>
+                                                        @item.ProjectName
 
-                                                </td>
-                                            </tr>
+                                                    </td>
+                                                </tr>
+                                            }
                                         }
-                                    }
-                                    else
-                                    {   
-                                      <label class="text-primary">No Project Assigned</label>
-                                    }
-                                </table>
-                            </div>
+                                        else
+                                        {
+                                            <label class="text-primary">No Project Assigned</label>
+                                        }
+                                    </table>
+                                </div>
+                            </td>
                             <br />
                             <br />
                             <dt>
@@ -78,12 +80,7 @@
                             <dd>
                                 @Html.DisplayFor(model => model.EmployeeAddress)
                             </dd>
-                            <dt>
-                                @Html.DisplayNameFor(model => model.EmployeeSalary)
-                            </dt>
-                            <dd>
-                                @Html.DisplayFor(model => model.EmployeeSalary)
-                            </dd>
+                         
                             <dt>
                                 @Html.DisplayNameFor(model => model.DepartmentName)
                             </dt>
@@ -118,13 +115,12 @@
 
                                     <input id="btnAddPoject" type="submit" value="UpdateCheckBox" class="btn btn-primary" />
                                    
-                                    @Html.ActionLink("Back To List", "Display", new { id = Model.EmployeeId }, new { @class = "btn btn-primary" })
+                                    @Html.ActionLink("Back To List", "Index", new { id = Model.EmployeeId }, new { @class = "btn btn-primary" })
                                     @Html.ActionLink("Edit", "Edit", "Employee", new { id = Model.EmployeeId }, new { @class = "btn btn-primary" })
 
-                                }
+                                 }
 
                             </div>
-
                         </dl>
                     </div>
                     <div class="col-md-6">
@@ -138,7 +134,7 @@
 </div>
 
 
-        </p>
+        @*</p>*@
 <link href="~/Content/themes/base/jquery-ui.min.css" rel="stylesheet" />
 @section Scripts {
     @* @Scripts.Render("~/bundles/jqueryval")*@
@@ -152,7 +148,6 @@
                 projectId[i] = $(this).val();
             });
 
-
             $.ajax({
                 type: "POST",
                 url: "/Employee/DetailsProject",
@@ -160,7 +155,7 @@
                     projectId: projectId,
                 },
                 success: function (result) {
-                    window.location.href = "/Employee/Display";
+                    window.location.href = "/Employee/Details";
                     alert(result);
                 },
                 error: function (result) {

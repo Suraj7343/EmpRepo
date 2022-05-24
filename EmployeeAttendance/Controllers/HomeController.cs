@@ -3,7 +3,7 @@ using EmployeeAttendance.BAL.Services;
 using EmployeeAttendance.WebHelper;
 using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
+//using System.Data.SqlClient;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -38,7 +38,9 @@ namespace EmployeeAttendance.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Login(AdminLogInVM adminLogInVM)
         {
-            Guid logInVM = Guid.Empty;
+            //    Guid logInVM = Guid.Empty;
+            //bool logInVM = false;
+            LogInVM model = new LogInVM();
             AdminLogInVM result = new AdminLogInVM();
             EmployeeVM userDetails = new EmployeeVM();
 
@@ -46,16 +48,16 @@ namespace EmployeeAttendance.Controllers
             {
                 result = _service.Login(adminLogInVM);
                 Session[SessionKey.isAdmin] = result.IsAdmin;
-                Session[SessionKey.userId] = result.Id;
+                Session[SessionKey.userId] = result.Id; //userlogindetail table id
 
                 if (result != null)
                 {
                     userDetails = _service.GetAllUserDetails(result.UserLoginDetailsId);
                     if (Session[SessionKey.userId] != null)
                     {
-                        logInVM = _service.LoginTime(result.Id);
+                        model = _service.LoginTime(result.Id);
                     }
-                    Session[SessionKey.logInTimeTableId] = logInVM;
+                    Session[SessionKey.logInTimeTableId] = model.Id; //logintime table id
 
                     Session[SessionKey.userName] = userDetails.UserName;
                     Session[SessionKey.empId] = userDetails.EmployeeId;
@@ -78,70 +80,5 @@ namespace EmployeeAttendance.Controllers
             }
             return View();
         }
-
-
-        #region LogInAndLogOutTestCode
-        //public ActionResult Login(AdminLogInVM adminLogInVM)
-        //{
-        //    #region MyRegion
-        //    /* bool UserDetails = _service.AdminLogin(adminLogInVM);
-        //   if (ModelState.IsValid)
-        //   {
-        //       if (UserDetails == false)
-        //       {
-        //           ModelState.AddModelError("Failure", "Wrong Username and password combination !");
-
-        //           return View();
-
-        //       }
-
-        //       else
-        //       {
-        //           string abc = "EmployeeDetailsDBEntities";
-        //           SqlConnection con = new SqlConnection(abc);
-        //           con.Open();
-        //           SqlCommand comm = new SqlCommand("insert into LoginTimes values(@UserId,@TimeIn)", con);
-        //           comm.Parameters.AddWithValue("@UserId", adminLogInVM.LoginTimeId);
-        //           comm.Parameters.AddWithValue("@TimeIn", DateTime.Now);
-        //           comm.ExecuteNonQuery();
-        //           //Close the Connection
-        //           con.Close();
-        //           return RedirectToAction("Index", "Employee");
-        //       }
-        //   }
-        //   else
-        //   {
-        //       //If model state is not valid, the model with error message is returned to the View.
-        //       return View(UserDetails);
-        //   }*/
-        //    #endregion
-
-        //    bool UserDetails = _service.AdminLogin(adminLogInVM);
-        //    //Session["userId"] = adminLogInVM.Id;
-        //    if (UserDetails)
-        //    {
-        //        return RedirectToAction("Index", "Employee");
-        //    }
-        //    else
-        //    {
-        //        _service.DisplayDetail(adminLogInVM);
-        //        return RedirectToAction("Index", "DashBoard");
-
-        //    }
-        //}
-
-        //[HttpGet]
-        //public ActionResult LogOff()
-        //{
-        //  bool abc=  _service.UpdateLoginLastUpdateStatus();
-        //    if (abc)
-        //    {
-        //        Session.Abandon();
-        //        return RedirectToAction("Index", "Home");
-        //    }
-        //    return View();
-
-        //}
-        #endregion
     }
 }

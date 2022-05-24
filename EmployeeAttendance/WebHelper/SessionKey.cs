@@ -13,6 +13,7 @@ namespace EmployeeAttendance.WebHelper
         public const string Data = "Data";
         public const string empId = "empId";
         public const string userId = "userId";
+        public const string Id = "userId";
         public const string logInTimeTableId = "logInTimeTableId"; // this id is used for logout the account or project
     }
 }

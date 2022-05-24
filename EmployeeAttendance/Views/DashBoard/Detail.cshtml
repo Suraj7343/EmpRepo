@@ -1,0 +1,169 @@
+﻿@model EmployeeAttendance.BAL.Models.EmployeeVM
+@{
+    ViewBag.Title = "Detail";
+    var testsession = Session["Data"];
+}
+<br />
+<br />
+@*<h2 class="text-primary text-center">
+        @Session["UserName"]
+    </h2>*@
+<div class="form-group btn-contact">
+    <div class="col-md-6">
+        <a class="btn btn-primary" href="/DashBoard/Index"><</a>
+    </div>
+</div>
+<br />
+<br />
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <h1 class="panel-title text-center"> @Session["UserName"]</h1>
+    </div>
+    <div class="panel-body">
+        @using (Html.BeginForm("LogOff", "Employee", FormMethod.Post))
+        {
+            <div class="jumbotron col-lg-12">
+
+                <div class="col-lg-6">
+
+                    <dl class="dl-horizontal">
+
+                        <dt>
+                            @Html.DisplayNameFor(model => model.Name)
+                        </dt>
+                        <dd>
+                            @Html.DisplayFor(model => model.Name)
+                        </dd>
+                        <dt>
+                            @Html.DisplayNameFor(model => model.Email)
+                        </dt>
+
+                        <dd>
+                            @Html.DisplayFor(model => model.Email)
+                        </dd>
+                        <dt>
+                            @Html.DisplayNameFor(model => model.ContactNumber)
+                        </dt>
+
+                        <dd>
+                            @Html.DisplayFor(model => model.ContactNumber)
+                        </dd>
+                        <dt>
+                            @Html.DisplayNameFor(model => model.DateOfBirth)
+                        </dt>
+
+                        <dd>
+                            @Html.DisplayFor(model => model.DateOfBirth)
+                        </dd>
+                        <dt>
+                            @Html.DisplayNameFor(model => model.EmployeeAddress)
+                        </dt>
+
+                        <dd>
+                            @Html.DisplayFor(model => model.EmployeeAddress)
+                        </dd>
+                        <dt>
+                            @Html.DisplayNameFor(model => model.EmployeeSalary)
+                        </dt>
+
+                        <dd>
+                            @Html.DisplayFor(model => model.EmployeeSalary)
+                        </dd>
+                        <dt>
+                            @Html.DisplayNameFor(model => model.DepartmentName)
+                        </dt>
+
+                        <dd>
+                            @Html.DisplayFor(model => model.DepartmentName)
+                        </dd>
+                        <dt>
+                            ProjectName
+                        </dt>
+
+                        <div>
+                            @using (Html.BeginForm("DetailsProject", "Employee", FormMethod.Post))
+                            {
+                                <table>
+                                    @foreach (var item in ViewBag.ProjectList)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <input type="checkbox" class="Checkbox_temp" checked="@item.IsChecked"
+                                                       id="@item.ProjectName" value="@(item.PrjId)" name="res" class="chkres" />
+                                                @*<input type="hidden" class="Checkbox_temp" id="@item.Key" />*@
+                                            </td>
+                                            <td>
+                                                @item.ProjectName
+                                            </td>
+                                        </tr>
+                                    }
+                                </table>
+                                <br />
+                                <br />
+                                <input id="btnAddPoject" type="submit" value="SwitchToProject" class="btn btn-primary" />
+                            }
+                        </div>
+                    </dl>
+                </div>
+                <div class="col-lg-6">
+                    <dd>
+                        <img src="@Url.Content(Model.EmployeeImage)" height="190" width="250" />
+                    </dd>
+                </div>
+            </div>
+        }
+        @*<div id="partialView">
+            </div>*@
+    </div>
+</div>
+
+<link href="~/Content/themes/base/jquery-ui.min.css" rel="stylesheet" />
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <script src="~/Scripts/jquery-ui-1.12.0.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            $("#abc").click(function () {
+
+            });
+        });
+
+    </script>
+    <script type="text/javascript">
+        $(document).on("click", "#PopUp", function () {
+            $("#Pop").modal("show");
+
+        });
+    </script>
+    <script>
+        $('#btnAddPoject').click(function (e) {
+
+            var projectId = [];
+
+            $('.Checkbox_temp:checked').each(function (i) {
+                projectId[i] = $(this).val();
+            });
+
+            $.ajax({
+                type: "POST",
+                url: "/DashBoard/UpdateCheckBox",
+                data: {
+                    projectId: projectId,
+                },
+                success: function (result) {
+                    window.location.href = "/DashBoard/DashBoardRelatedToProject";
+                    alert(result);
+                },
+                error: function (result) {
+                    alert('error');
+                }
+            });
+        });
+    </script>
+
+}
+
+
+

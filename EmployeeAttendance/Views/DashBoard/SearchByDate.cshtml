@@ -6,7 +6,19 @@
 }
 <br />
 <br />
-<br />
+<center>
+    <p>
+        @using (Html.BeginForm("SearchByDate", "DashBoard", FormMethod.Post, new { enctype = "multipart/form-data" }))
+        {
+            <input type="date" name="FromDate" />
+            <input type="date" name="ToDate" />
+            <input type="submit" name="submit" value="Search" />
+
+
+        }
+    </p>
+</center>
+@*<h2 class="text-center text-primary">DashBoard</h2>*@
 <div class="panel panel-primary">
     <div class="panel-heading">
         <h1 class="panel-title text-center">Attendance</h1>
@@ -15,30 +27,27 @@
         <div class="jumbotron">
             <div class="">
                 <table class="table text-justify">
-
                     <tr>
                         <th>Date</th>
                         <th>TimeIn</th>
                         <th>TimeOut</th>
                         <th>TotalTime</th>
                         <th>Status</th>
-                        <th>Action</th>
                     </tr>
 
                     @foreach (var item in Model)
                     {
                         <tr>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.Date)
-                                @Html.HiddenFor(modelItem => item.Id)
-                                @Html.HiddenFor(modelItem => item.LoginTimeId)
+                            @Html.HiddenFor(modelItem => item.Id)
 
+                            <td>
+                                @Html.DisplayFor(modelItem => item.CreatedOn)
                             </td>
                             <td>
-                                @Html.DisplayFor(modelItem => item.TimeInString)
+                                @Html.DisplayFor(modelItem => item.TimeIn)
                             </td>
                             <td>
-                                @Html.DisplayFor(modelItem => item.TimeOutString)
+                                @Html.DisplayFor(modelItem => item.TimeOut)
                             </td>
                             <td>
                                 @Html.DisplayFor(modelItem => item.TotalTime)
@@ -60,46 +69,15 @@
                                     <label class="text-primary">On Leave This Day</label>
                                 }
                             </td>
-                            <td>
-                                <input type="button" value="Display" onclick='Disp("@(item.Date)")' />
-                                @*@Html.ActionLink("Detail", "TimeRelatedToProject", "DashBoard", new { id = item.LoginTimeId }-->, new { @class = "btn btn-primary" }<!--)*@
-                                @*<button type="button" class="btnDisplayData" data-date-id="@item.Date">Display</button>*@
-                                @*<input type="submit" id="btnDisplayData"  name="submit" data="@(item.Date)" value="Display" />*@
-                            </td>
                         </tr>
                     }
                 </table>
             </div>
         </div>
+        @*<div class="form-group">
+                <a class="btn btn-primary" href="/DashBoard/Index"> > </a>
+            </div>*@
     </div>
 </div>
 
-<div id="openpopup" style="display:none"></div>
-<script>
-    function Disp(/*LoginTimeId,*/ Date) {
-        var x = $("#openpopup");
-   /*     alert(Date);*/
-        /*  x.load("/DashBoard/PopUp?LoginTimeId=" + LoginTimeId + "$(Date)" + Date, function () {*/
-        x.load("/DashBoard/PopUp?Date=" + Date, function () {
-            x.dialog({
-                show: {
-                    effect: "blind",
-                    duration: 1000
-                },
-                hide: {
-                    effect: "explode",
-                    duration: 1000
-                },
-                modal: true,
-                width: 700,
-                height: 500,
-                title: "List",
-                resizable: false
-            });
-        });
-    }
-</script>
 
-
-
-   

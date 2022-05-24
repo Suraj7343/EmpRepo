@@ -1,18 +1,20 @@
 ﻿@model IEnumerable<EmployeeAttendance.BAL.Models.LogInVM>
 @{
-    ViewBag.Title = "PopUp";
+    ViewBag.Title = "TimeRelatedToProject";
 }
 <br />
 <br />
+
 <div class="panel panel-primary">
     <div class="panel-heading">
-        <h1 class="panel-title text-center">TotalTime</h1>
-    </div>
+            <h1 class="panel-title text-center">Project Time</h1>
+        </div>
     <div class="panel-body">
         <div class="jumbotron">
             <div class="">
                 <table class="table text-justify">
                     <tr>
+                        <th>Date</th>
                         <th>ProjectName</th>
                         <th>TimeIn</th>
                         <th>TimeOut</th>
@@ -23,6 +25,11 @@
                     {
                         <tr>
                             @Html.HiddenFor(modelItem => item.Id)
+                            @Html.HiddenFor(modelItem => item.LoginTimeId)
+                            @Html.HiddenFor(modelItem => item.ProjectID)
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Date)
+                            </td>
                             <td>
                                 @Html.DisplayFor(modelItem => item.ProjectName)
                             </td>
@@ -35,19 +42,9 @@
                             <td>
                                 @Html.DisplayFor(modelItem => item.TotalTime)
                             </td>
-
                         </tr>
                     }
-
                 </table>
-            </div>
-        </div>
-        <div class="form-group">
-            @*<div class="col-md-4">
-                  <a class="btn btn-primary" href="/DashBoard/Index">BackToList</a>
-                </div>*@
-            <div class="col-md-4">
-                <a href="/Employee/LogOff?Length=8" class="btn btn-primary">TurnOff</a>
             </div>
         </div>
     </div>

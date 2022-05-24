@@ -12,7 +12,7 @@ namespace EmployeeAttendance.BAL.Models
         public System.Guid EmailId { get; set; }
 
         [Required]
-        [EmailAddress]
+        //[EmailAddress]
         public string EmailTo { get; set; }
 
         [Required]
@@ -28,8 +28,5 @@ namespace EmployeeAttendance.BAL.Models
         [Required]
         public string Password { get; set; }
 
-        //public bool? IsDeleted { get; set; }
-
-        //public DateTime? CreatedOn { get; set; }
     }
 }
