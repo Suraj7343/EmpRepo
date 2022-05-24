@@ -26,27 +26,5 @@ namespace EmployeeAttendance.BAL.Models
         public string Message { get; set; }
         public bool? LeaveStatus { get; set; }
 
-        //[Required]
-        //[DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:yyyy-MM-dd}")]
-        //public DateTime? FromDate { get; set; }
-
-        //[Required]
-        //[DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:yyyy-MM-dd}")]
-        //public DateTime? ToDate { get; set; }
-
-        #region MyRegion
-        //public virtual Project Project { get; set; }
-        //public virtual UserLoginDetail UserLoginDetail { get; set; }
-        //public List<DateTime> AllProjectTime { get; }
-        //public TimeSpan? SumOfTotalTime { get; set; }
-        //public Guid UserLoginDetailsId { get; set; } //foreign key with employee table column employeeId
-        //public string Password { get; set; }
-        //public bool? IsAdmin { get; set; }
-        //public List<string> WeekDayName { get; set; }
-        //public Guid LoginId { get; set; }
-        //public string UserName { get; set; }
-        //public string UserPassword { get; set; }
-        //public bool? IsDeleted { get; set; }
-        #endregion
     }
 }

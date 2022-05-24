@@ -365,13 +365,13 @@
     <Content Include="Views\DashBoard\EmployeeDashBoardList.cshtml" />
     <Content Include="Views\Shared\_EmployeeDashBoard.cshtml" />
     <Content Include="Views\DepartmentAndProject\ProjectManagement.cshtml" />
-    <Content Include="Views\Employee\Display.cshtml" />
     <Content Include="Views\DepartmentAndProject\Projects.cshtml" />
     <Content Include="Views\DepartmentAndProject\EditProject.cshtml" />
     <Content Include="Views\DashBoard\Detail.cshtml" />
     <Content Include="Views\DashBoard\SearchByDate.cshtml" />
     <Content Include="Views\DashBoard\TimeRelatedToProject.cshtml" />
     <Content Include="Views\DashBoard\PopUp.cshtml" />
+    <Content Include="Views\Employee\_SearchingPartial.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

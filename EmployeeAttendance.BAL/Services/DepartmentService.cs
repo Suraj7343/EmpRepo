@@ -163,10 +163,16 @@ namespace EmployeeAttendance.BAL.Services
             bool result = true;
 
            Department dep= _context.Departments.FirstOrDefault(x => x.DepartmentId == id);
+            Guid departmentId = dep.DepartmentId;
 
             if(dep != null)
             {
                 dep.IsDeleted = true;
+                Project model= _context.Projects.FirstOrDefault(x=>x.DepartmentId==departmentId);
+                if(model != null)
+                {
+                   model.IsDeleted = true;
+                }
                 _context.SaveChanges();
             }
             return result;

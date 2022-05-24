@@ -85,26 +85,26 @@ namespace EmployeeAttendance.BAL.Services
         //    }
         //}
 
-        public Guid LoginTime(Guid userId)
+        public LogInVM LoginTime(Guid userId)
         {
+            //bool result = false;
             LogInVM logInVM = new LogInVM();
-            Guid result = Guid.Empty;
+            //Guid result = Guid.Empty;
             try
             {
-
                 if (userId != Guid.Empty)
                 {
                     LoginTime loginTime = new LoginTime();
-                    LogInTimeLogDetail timeLogDetail = new LogInTimeLogDetail();
+                    LogInTimeLogDetail logInTimeLogDetail = new LogInTimeLogDetail();
 
                     var date = DateTime.Now.Date;
-                    var result1 = _context.LoginTimes.FirstOrDefault(x => x.LoginTimeId == userId && x.CreatedOn == date && x.IsDeleted == false);
+                    var model = _context.LoginTimes.FirstOrDefault(x => x.LoginTimeId == userId && x.CreatedOn == date && x.IsDeleted == false);
 
-                    if (result1 == null)
+                    if (model == null)
                     {
                         loginTime.Id = Guid.NewGuid();
                         logInVM.Id = loginTime.Id;  // this id is used to logout the projects
-                        result = loginTime.Id;
+                        //result = loginTime.Id;
 
                         loginTime.LoginTimeId = userId;
                         //TimeSpan CurrentTime = DateTime.Now.TimeOfDay;
@@ -114,33 +114,89 @@ namespace EmployeeAttendance.BAL.Services
                         loginTime.CreatedOn = DateTime.Now.Date;
                         loginTime.LeaveStatus = false;
 
-                        timeLogDetail.Id = Guid.NewGuid();
-                        timeLogDetail.UserLogInTimeId = userId;
-                        timeLogDetail.TimeIn = DateTime.Now;
-                        timeLogDetail.IsDeleted = false;
-                        timeLogDetail.CreatedOn = DateTime.Now.Date;
-                        timeLogDetail.LogInTimeID = loginTime.Id;
+                        logInTimeLogDetail.Id = Guid.NewGuid();
+                        logInTimeLogDetail.UserLogInTimeId = userId;
+                        logInTimeLogDetail.TimeIn = DateTime.Now;
+                        logInTimeLogDetail.IsDeleted = false;
+                        logInTimeLogDetail.CreatedOn = DateTime.Now.Date;
+                        logInTimeLogDetail.LogInTimeID = loginTime.Id;
 
                         _context.LoginTimes.Add(loginTime);
 
-                        _context.LogInTimeLogDetails.Add(timeLogDetail);
+                        _context.LogInTimeLogDetails.Add(logInTimeLogDetail);
                         _context.SaveChanges();
+                        //result = true;
                     }
                     else
                     {
-                        var result2 = _context.LoginTimes.FirstOrDefault(x => x.LoginTimeId == userId && x.IsDeleted == false);
+                        var result1 = _context.LoginTimes.FirstOrDefault(x => x.LoginTimeId == userId && x.IsDeleted == false && x.CreatedOn == date);
 
-                        timeLogDetail.Id = Guid.NewGuid();
-                        timeLogDetail.UserLogInTimeId = userId;
-                        timeLogDetail.TimeIn = DateTime.Now;
-                        timeLogDetail.IsDeleted = false;
-                        timeLogDetail.CreatedOn = DateTime.Now.Date;
-                        timeLogDetail.LogInTimeID = result2.Id;
-                        HttpContext.Current.Session["LogDetailID"] = timeLogDetail.Id;
-                        _context.LogInTimeLogDetails.Add(timeLogDetail);
+                        logInTimeLogDetail.Id = Guid.NewGuid();
+                        logInTimeLogDetail.UserLogInTimeId = userId;
+                        logInTimeLogDetail.TimeIn = DateTime.Now;
+                        logInTimeLogDetail.IsDeleted = false;
+                        logInTimeLogDetail.CreatedOn = DateTime.Now.Date;
+                        logInTimeLogDetail.LogInTimeID = result1.Id;
+                        HttpContext.Current.Session["LogDetailID"] = logInTimeLogDetail.Id;
+                        _context.LogInTimeLogDetails.Add(logInTimeLogDetail);
                         _context.SaveChanges();
+                        //result = true;
 
                     }
+                }
+            }
+            catch (Exception ex)
+            {
+                ExceptionService.SaveException(ex);
+            }
+            return logInVM;
+        }
+
+        public bool DirectLogOutTime(Guid logInTimeTableId, Guid userId)
+        {
+            bool result = false;
+            try
+            {
+                if (logInTimeTableId == Guid.Empty)
+                {
+                    var LogDetailID = new Guid(HttpContext.Current.Session["LogDetailID"].ToString());
+                    //var userID = new Guid(HttpContext.Current.Session["logInTimesTableID"].ToString());
+                    var model = _context.LogInTimeLogDetails.FirstOrDefault(x => x.Id == LogDetailID && x.IsDeleted == false && x.ProjectId == null);
+
+                    var UserloginTimeId = model.UserLogInTimeId;
+                    var Id = model.LogInTimeID;
+                    model.TimeOut = DateTime.Now;
+                    //DATEDIFF(minutes, TimeIn, TimeOut) / 60;
+                    _context.Entry(model).State = System.Data.Entity.EntityState.Modified;
+
+                    var createdOn = DateTime.Now.Date;
+                    LoginTime loginTime = _context.LoginTimes.FirstOrDefault(x => x.Id == Id && x.CreatedOn==createdOn && x.IsDeleted == false && x.ProjectID == null);
+
+                    //loginTime.TimeOut = DateTime.Now.TimeOfDay;
+                    loginTime.TimeOut = DateTime.Now;
+                    //loginTime.TotalTime = loginTime.TimeOut - loginTime.TimeIn;
+                    _context.Entry(loginTime).State = System.Data.Entity.EntityState.Modified;
+
+                    _context.SaveChanges();
+                    result = true;
+                }
+                else
+                {
+                    LoginTime loginTime = _context.LoginTimes.FirstOrDefault(x => x.Id == logInTimeTableId && x.IsDeleted == false && x.ProjectID == null);
+
+                    //loginTime.TimeOut = DateTime.Now.TimeOfDay;
+                    loginTime.TimeOut = DateTime.Now;
+                    //loginTime.TotalTime = loginTime.TimeOut - loginTime.TimeIn;
+                    _context.Entry(loginTime).State = System.Data.Entity.EntityState.Modified;
+
+                    LogInTimeLogDetail model1 = _context.LogInTimeLogDetails.FirstOrDefault(x => x.LogInTimeID == logInTimeTableId && x.IsDeleted == false && x.ProjectId == null);
+
+                    model1.TimeOut = DateTime.Now;
+                    //DATEDIFF(minutes, TimeIn, TimeOut) / 60;
+                    _context.Entry(model1).State = System.Data.Entity.EntityState.Modified;
+                    _context.SaveChanges();
+                    result = true;
+
                 }
             }
             catch (Exception ex)
@@ -228,12 +284,12 @@ namespace EmployeeAttendance.BAL.Services
                 if (FromDate == null && ToDate == null)
                 {
                     var lastFourDays = DateTime.Now.AddDays(-5);
-                    result = _context.LoginTimes.Where(x => x.LoginTimeId == userId && x.IsDeleted == false && x.ProjectID == null && x.CreatedOn >= lastFourDays /*&& x.TotalTime != null*/)
+                    result = _context.LoginTimes.Where(x => x.LoginTimeId == userId && x.IsDeleted == false && x.ProjectID == null && x.CreatedOn >= lastFourDays && x.TimeOut != null)
                            .ToList();
                 }
                 else
                 {
-                    result = _context.LoginTimes.Where(x => x.CreatedOn >= FromDate && x.CreatedOn <= ToDate && x.IsDeleted == false /*&& x.TotalTime != null*/ && x.ProjectID == null && x.LoginTimeId == userId)
+                    result = _context.LoginTimes.Where(x => x.CreatedOn >= FromDate && x.CreatedOn <= ToDate && x.IsDeleted == false && x.TimeOut != null && x.ProjectID == null && x.LoginTimeId == userId)
                            .ToList();
                 }
 
@@ -381,57 +437,6 @@ namespace EmployeeAttendance.BAL.Services
             return result;
         }
 
-        public bool DirectLogOutTime(Guid logInTimeTableId, Guid userId)
-        {
-            bool result = false;
-            try
-            {
-                if (logInTimeTableId == Guid.Empty)
-                {
-                    var LogDetailID = new Guid(HttpContext.Current.Session["LogDetailID"].ToString());
-                    //var userID = new Guid(HttpContext.Current.Session["logInTimesTableID"].ToString());
-                    var model = _context.LogInTimeLogDetails.FirstOrDefault(x => x.Id == LogDetailID && x.IsDeleted == false && x.ProjectId == null);
-
-                    var logInId = model.LogInTimeID;
-                    model.TimeOut = DateTime.Now;
-                    //DATEDIFF(minutes, TimeIn, TimeOut) / 60;
-                    _context.Entry(model).State = System.Data.Entity.EntityState.Modified;
-
-                    LoginTime loginTime = _context.LoginTimes.FirstOrDefault(x => x.Id == logInId && x.IsDeleted == false && x.ProjectID == null);
-
-                    //loginTime.TimeOut = DateTime.Now.TimeOfDay;
-                    loginTime.TimeOut = DateTime.Now;
-                    //loginTime.TotalTime = loginTime.TimeOut - loginTime.TimeIn;
-                    _context.Entry(loginTime).State = System.Data.Entity.EntityState.Modified;
-
-                    _context.SaveChanges();
-                }
-                else
-                {
-                        LoginTime loginTime = _context.LoginTimes.FirstOrDefault(x => x.Id == logInTimeTableId && x.IsDeleted == false && x.ProjectID == null);
-                       
-                        //loginTime.TimeOut = DateTime.Now.TimeOfDay;
-                        loginTime.TimeOut = DateTime.Now;
-                        //loginTime.TotalTime = loginTime.TimeOut - loginTime.TimeIn;
-                        _context.Entry(loginTime).State = System.Data.Entity.EntityState.Modified;
-
-                        LogInTimeLogDetail model1 = _context.LogInTimeLogDetails.FirstOrDefault(x => x.LogInTimeID == logInTimeTableId && x.IsDeleted == false && x.ProjectId == null);
-                  
-                        model1.TimeOut = DateTime.Now;
-                        //DATEDIFF(minutes, TimeIn, TimeOut) / 60;
-                        _context.Entry(model1).State = System.Data.Entity.EntityState.Modified;
-                        _context.SaveChanges();
-                    
-
-                }
-            }
-            catch (Exception ex)
-            {
-                ExceptionService.SaveException(ex);
-            }
-            return result;
-        }
-
         public List<LogInVM> ProjectTotalTimeCount()
         {
             List<LogInVM> logInVMs = new List<LogInVM>();
@@ -518,15 +523,38 @@ namespace EmployeeAttendance.BAL.Services
                 .Select(x => new KeyValueModel<Guid, string>
                 { Key = x.DepartmentId, Value = x.DepartmentName })
                 .ToList();
-
             return result;
         }
 
-        public List<KeyValueModel<Guid, string>> GetProjectOfEmployee()
+        public List<DepartmentVM> DepartmentAssignedToEmployee(Guid id)
+        {
+            List<DepartmentVM> depVMs = new List<DepartmentVM>();
+            var emp=  _context.EmployeeDetails.FirstOrDefault(x=>x.EmployeeId==id && x.IsDeleted==false);
+            Guid depId = (Guid)emp.DepId;
+            var result= _context.Departments.Where(x => x.DepartmentId == depId && x.IsDeleted == false).ToList();
+
+            if(result != null)
+            {
+                foreach (var item in result)
+                {
+                    DepartmentVM departmentVM = new DepartmentVM();
+
+                    departmentVM.DepartmentId = item.DepartmentId;
+                    departmentVM.DepartmentName = item.DepartmentName;
+                    depVMs.Add(departmentVM);
+                }
+            }
+            return depVMs;
+        }
+
+        public List<KeyValueModel<Guid, string>> GetProjectOfEmployee(Guid id)
         {
             List<KeyValueModel<Guid, string>> result = new List<KeyValueModel<Guid, string>>();
+            var emp = _context.EmployeeDetails.FirstOrDefault(x => x.EmployeeId == id && x.IsDeleted == false);
+            Guid depId = (Guid)emp.DepId;
+            //var result1 = _context.Departments.Where(x => x.de && x.IsDeleted == false).ToList();
 
-            result = _context.Projects.Where(x => x.IsDeleted == false)
+            result = _context.Projects.Where(x => x.IsDeleted == false && x.DepartmentId== depId)
                 .Select(x => new KeyValueModel<Guid, string>
                 { Key = x.ProjectId, Value = x.ProjectName, IsChecked = false })
                 .ToList();
@@ -573,6 +601,7 @@ namespace EmployeeAttendance.BAL.Services
                         userDetails.CreatedOn = DateTime.Now.Date;
                         userDetails.IsDeleted = false;
                         userDetails.IsAdmin = false;
+                        userDetails.Email = employeeDetail.Email;
                         _context.UserLoginDetails.Add(userDetails);
                         _context.SaveChanges();
                     }
@@ -594,9 +623,8 @@ namespace EmployeeAttendance.BAL.Services
             return result;
         }
 
-        public IPagedList<EmployeeDetail> Pagination(string sortOrder, string CurrentSort, int? page)
+        public IPagedList<EmployeeDetail> Pagination(string sortOrder, string CurrentSort, int? page, string Search)
         {
-
             int pageSize = 9;
             int pageIndex = 1;
             pageIndex = page.HasValue ? Convert.ToInt32(page) : 1;
@@ -610,67 +638,23 @@ namespace EmployeeAttendance.BAL.Services
                 case "FirstName":
 
                     if (sortOrder.Equals(CurrentSort))
-
-                        result = _context.EmployeeDetails
-                                 .Where(m => m.IsDeleted == false && m.IsAdmin == false)
-                                 .OrderByDescending(x => x.CreatedOn)
-                                 .ToPagedList(page ?? pageIndex, pageSize);
+                        if (Search == null)
+                        {
+                            result = _context.EmployeeDetails
+                                     .Where(m => m.IsDeleted == false && m.IsAdmin == false)
+                                     .OrderByDescending(x => x.CreatedOn)
+                                     .ToPagedList(page ?? pageIndex, pageSize);
+                        }
+                        else
+                        {
+                            result = _context.EmployeeDetails.Where(x => x.FirstName.StartsWith(Search) && x.IsDeleted == false && x.IsAdmin == false)
+                              .ToList().ToPagedList(page ?? pageIndex, pageSize);
+                        }
 
                     break;
             }
 
             return result;
-        }
-
-        /// <summary>
-        /// this code find all the records when click on search button 
-        /// (Display all the employees)
-        /// </summary>
-        /// <param name="Search">Name of the employee</param>
-        /// <returns>
-        /// List of all employee records
-        /// </returns>
-
-        public List<EmployeeVM> FindData(string Search)
-        {
-            List<EmployeeVM> employee = new List<EmployeeVM>();
-            try
-            {
-                if (Search != null)
-                {
-                    var findData = _context.EmployeeDetails.Where(x => x.FirstName.Contains(Search) && x.IsDeleted == false && x.IsAdmin == false).ToList();
-
-                    foreach (var list in findData)
-                    {
-                        EmployeeVM employeeVM = new EmployeeVM();
-
-                        employeeVM.EmployeeId = list.EmployeeId;
-
-                        HttpContext.Current.Session["EmpId"] = employeeVM.EmployeeId;
-
-                        employeeVM.FirstName = list.FirstName;
-                        employeeVM.LastName = list.LastName;
-                        employeeVM.Email = list.Email;
-                        employeeVM.ContactNumber = list.ContactNumber;
-                        employeeVM.DateOfBirth = list.DateOfBirth;
-                        employeeVM.EmployeeAddress = list.EmployeeAddress;
-                        employeeVM.EmployeeSalary = list.EmployeeSalary;
-                        employeeVM.EmployeeImage = list.EmployeeImage;
-                        employeeVM.IsDeleted = false;
-                        employeeVM.CreatedOn = DateTime.Now;
-                        employeeVM.DepId = list.DepId;
-                        employeeVM.ProjId = list.ProjId;
-                        employeeVM.DepartmentName = list.Department.DepartmentName;
-
-                        employee.Add(employeeVM);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                ExceptionService.SaveException(ex);
-            }
-            return employee;
         }
 
         public List<EmployeeVM> GetEmployee()
@@ -787,9 +771,15 @@ namespace EmployeeAttendance.BAL.Services
             {
                 EmployeeDetail employeeDetail = _context.EmployeeDetails.FirstOrDefault(x => x.EmployeeId == id);
 
+                Guid userLogInId = employeeDetail.EmployeeId;
                 if (employeeDetail != null)
                 {
                     employeeDetail.IsDeleted = true;
+                    UserLoginDetail model= _context.UserLoginDetails.FirstOrDefault(x=>x.UserLoginDetailsId==employeeDetail.EmployeeId);
+                    if(model != null)
+                    {
+                        model.IsDeleted = true;
+                    }
                     _context.SaveChanges();
                 }
             }
@@ -1347,7 +1337,7 @@ namespace EmployeeAttendance.BAL.Services
                         lev.TimeOut = lis.TimeOut;
                         DateTime TimeOut = (DateTime)lev.TimeOut;
                         string timeOutString = TimeOut.ToLongTimeString();
-                        lev.TimeInString = timeOutString;
+                        lev.TimeOutString = timeOutString;
                         //lev.TotalTime = lis.TotalTime;
 
                         TimeSpan difference = TimeOut.Subtract(TimeIn);

@@ -28,8 +28,5 @@ namespace EmployeeAttendance.BAL.Models
         [Required]
         public string Password { get; set; }
 
-        //public bool? IsDeleted { get; set; }
-
-        //public DateTime? CreatedOn { get; set; }
     }
 }

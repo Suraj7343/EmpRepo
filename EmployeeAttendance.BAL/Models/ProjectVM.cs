@@ -12,14 +12,10 @@ namespace EmployeeAttendance.BAL.Models
    public class ProjectVM
     {
         public Guid ProjectId { get; set; }
-        //public Guid PId { get; set; }
 
         [Display(Name = "Project")]
         public string ProjectName { get; set; } 
-        //public string PName { get; set; }
-        //public List<Project> GetProjectList { get; set; }
-        //public List<SelectListItem> Projects { get; set; }
-        //public Guid[] ProjectIds { get; set; }
+
         [Display(Name ="Department")]
         public Guid? DepartmentId { get; set; }
 
