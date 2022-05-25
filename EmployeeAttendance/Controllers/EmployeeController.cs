@@ -49,11 +49,17 @@ namespace EmployeeAttendance.Controllers
               return PartialView("_SearchingPartial", result);
         }
 
-        public ActionResult TotalTimeOfEmployees(string Search)
+        public ActionResult TotalTimeOfEmployees()
         {
-            var leave = _service.TotalTimeOfEmployees(Search);
-            return View(leave);
+            return View();
         }
+
+        public ActionResult ListOfTotalTime(string Search, DateTime? OnDate)
+        {
+            var leave = _service.TotalTimeOfEmployees(Search, OnDate);
+            return PartialView("_TotalTimeOfEmployees", leave); ;
+        }
+
 
         [HttpPost]
         public JsonResult MultiSelectEmail(List<string> email)   //employeeId
@@ -358,6 +364,5 @@ namespace EmployeeAttendance.Controllers
             leave = _service.TimeDetail(id);
             return View(leave);
         }
-
     }
 }

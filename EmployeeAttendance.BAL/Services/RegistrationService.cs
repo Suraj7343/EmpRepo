@@ -949,7 +949,8 @@ namespace EmployeeAttendance.BAL.Services
 
                 leaveVM.UserLeaveId = data.UserLeaveId;
 
-                var userLeaveId = new Guid(HttpContext.Current.Session["userLeaveID"].ToString());
+                //var userLeaveId = new Guid(HttpContext.Current.Session["userLeaveID"].ToString());
+                var userLeaveId = data.UserLeaveId;
 
                 UserLoginDetail userLogin = _context.UserLoginDetails.FirstOrDefault(x => x.Id == userLeaveId);
 
@@ -1026,7 +1027,8 @@ namespace EmployeeAttendance.BAL.Services
                     leave.Approve = leaveVM.Approve;
                     leave.Reject = leaveVM.Reject;
 
-                    leave.UserLeaveId = new Guid(HttpContext.Current.Session["userID"].ToString());
+                    //leave.UserLeaveId = new Guid(HttpContext.Current.Session["userID"].ToString());
+                    leave.UserLeaveId = leave.Id;
 
                     _context.Leaves.Add(leave);
                     _context.SaveChanges();
@@ -1204,12 +1206,12 @@ namespace EmployeeAttendance.BAL.Services
         /// <param name="Search"></param>
         /// <returns>List of records</returns>
 
-        public List<EmployeeVM> TotalTimeOfEmployees(string Search)
+        public List<EmployeeVM> TotalTimeOfEmployees(string Search, DateTime? OnDate)
         {
             List<EmployeeVM> employee = new List<EmployeeVM>();
             try
             {
-                if (Search != null)
+                if (Search != string.Empty && Search != null)
                 {
                     var findData = _context.EmployeeDetails.Where(x => x.FirstName.Contains(Search) && x.IsDeleted == false && x.IsAdmin == false).ToList();
 
@@ -1235,17 +1237,17 @@ namespace EmployeeAttendance.BAL.Services
                         employeeVM.ProjId = list.ProjId;
                         employeeVM.DepartmentName = list.Department.DepartmentName;
 
-                        var empID = new Guid(HttpContext.Current.Session["EmpId"].ToString());
+                        var empID = employeeVM.EmployeeId;
 
                         UserLoginDetail userLogin = _context.UserLoginDetails.Where(x => x.UserLoginDetailsId == empID && x.IsDeleted == false).FirstOrDefault();
 
-                        HttpContext.Current.Session["EmpId"] = userLogin.Id;
+                        //HttpContext.Current.Session["EmpId"] = userLogin.Id;
 
-                        var userLogInId = new Guid(HttpContext.Current.Session["EmpId"].ToString());
+                        var userLogInId = userLogin.Id;
 
                         var LastFourDays = DateTime.Now.AddDays(-1);
 
-                        var loginTime = _context.LoginTimes.Where(x => x.LoginTimeId == userLogInId && x.IsDeleted == false && x.CreatedOn >= LastFourDays /*&& x.TotalTime != null*/)
+                        var loginTime = _context.LoginTimes.Where(x => x.LoginTimeId == userLogInId && x.IsDeleted == false && x.TimeOut != null)
                             .ToList();
 
                         if (loginTime != null)
@@ -1264,7 +1266,7 @@ namespace EmployeeAttendance.BAL.Services
 
                                 DateTime TimeOut = (DateTime)employeeVM.TimeOut;
                                 string timeOutString = TimeOut.ToLongTimeString();
-                                employeeVM.TimeOutString = timeInString;
+                                employeeVM.TimeOutString = timeOutString;
 
                                 TimeSpan difference = TimeOut.Subtract(TimeIn);
 
@@ -1275,6 +1277,146 @@ namespace EmployeeAttendance.BAL.Services
                             }
                         }
                         employee.Add(employeeVM);
+                    }
+                }
+
+                else if (OnDate != null)
+                {
+                    var findData = _context.EmployeeDetails.Where(x => x.FirstName.Contains(Search) && x.IsDeleted == false && x.IsAdmin == false).ToList();
+
+                    foreach (var list in findData)
+                    {
+                        EmployeeVM employeeVM = new EmployeeVM();
+
+                        employeeVM.EmployeeId = list.EmployeeId;
+
+                        HttpContext.Current.Session["EmpId"] = employeeVM.EmployeeId;
+
+                        employeeVM.FirstName = list.FirstName;
+                        employeeVM.LastName = list.LastName;
+                        employeeVM.Email = list.Email;
+                        employeeVM.ContactNumber = list.ContactNumber;
+                        employeeVM.DateOfBirth = list.DateOfBirth;
+                        employeeVM.EmployeeAddress = list.EmployeeAddress;
+                        employeeVM.EmployeeSalary = list.EmployeeSalary;
+                        employeeVM.EmployeeImage = list.EmployeeImage;
+                        employeeVM.IsDeleted = false;
+                        employeeVM.CreatedOn = DateTime.Now;
+                        employeeVM.DepId = list.DepId;
+                        employeeVM.ProjId = list.ProjId;
+                        employeeVM.DepartmentName = list.Department.DepartmentName;
+
+                        var empID = employeeVM.EmployeeId;
+
+                        UserLoginDetail userLogin = _context.UserLoginDetails.Where(x => x.UserLoginDetailsId == empID && x.IsDeleted == false).FirstOrDefault();
+
+                        //HttpContext.Current.Session["EmpId"] = userLogin.Id;
+
+                        var userLogInId = userLogin.Id;
+
+                        //var LastFourDays = DateTime.Now.AddDays(-1);
+
+                        var loginTime = _context.LoginTimes.Where(x => x.LoginTimeId == userLogInId && x.CreatedOn==OnDate && x.IsDeleted == false && x.TimeOut != null)
+                            .ToList();
+                        if (loginTime.Count > 0)
+                        {
+                            if (loginTime != null)
+                            {
+                                foreach (var lis in loginTime)
+                                {
+                                    LoginTime loginTime1 = new LoginTime();
+
+                                    employeeVM.TimeIn = lis.TimeIn;
+
+                                    DateTime TimeIn = (DateTime)employeeVM.TimeIn;
+                                    string timeInString = TimeIn.ToLongTimeString();
+                                    employeeVM.TimeInString = timeInString;
+
+                                    employeeVM.TimeOut = lis.TimeOut;
+
+                                    DateTime TimeOut = (DateTime)employeeVM.TimeOut;
+                                    string timeOutString = TimeOut.ToLongTimeString();
+                                    employeeVM.TimeOutString = timeOutString;
+
+                                    TimeSpan difference = TimeOut.Subtract(TimeIn);
+
+                                    TimeSpan ts2 = TimeSpan.Parse(difference.ToString());
+                                    ts2 = new TimeSpan(ts2.Ticks / TimeSpan.TicksPerSecond * TimeSpan.TicksPerSecond);
+                                    employeeVM.TotalTime = ts2;
+
+                                }
+                            }
+                            employee.Add(employeeVM);
+                        }
+                    }
+                }
+
+                else 
+                {
+                    var date = DateTime.Now.Date;
+                    var findData = _context.EmployeeDetails.Where(x => x.IsDeleted == false && x.IsAdmin == false).ToList();
+                    foreach (var list in findData)
+                    {
+                        EmployeeVM employeeVM = new EmployeeVM();
+
+                        employeeVM.EmployeeId = list.EmployeeId;
+
+                        HttpContext.Current.Session["EmpId"] = employeeVM.EmployeeId;
+
+                        employeeVM.FirstName = list.FirstName;
+                        employeeVM.LastName = list.LastName;
+                        employeeVM.Email = list.Email;
+                        employeeVM.ContactNumber = list.ContactNumber;
+                        employeeVM.DateOfBirth = list.DateOfBirth;
+                        employeeVM.EmployeeAddress = list.EmployeeAddress;
+                        employeeVM.EmployeeSalary = list.EmployeeSalary;
+                        employeeVM.EmployeeImage = list.EmployeeImage;
+                        employeeVM.IsDeleted = false;
+                        employeeVM.CreatedOn = DateTime.Now;
+                        employeeVM.DepId = list.DepId;
+                        employeeVM.ProjId = list.ProjId;
+                        employeeVM.DepartmentName = list.Department.DepartmentName;
+
+                        var empID = employeeVM.EmployeeId;
+
+                        UserLoginDetail userLogin = _context.UserLoginDetails.Where(x => x.UserLoginDetailsId == empID && x.IsDeleted == false).FirstOrDefault();
+
+                        //HttpContext.Current.Session["EmpId"] = userLogin.Id;
+
+                        var userLogInId = userLogin.Id;
+
+                        var LastFourDays = DateTime.Now.AddDays(-1);
+
+                        var loginTime = _context.LoginTimes.Where(x => x.LoginTimeId == userLogInId && x.IsDeleted == false && x.CreatedOn >= LastFourDays && x.TimeOut != null && x.ProjectID == null)
+                            .ToList();
+                        if (loginTime.Count > 0)
+                        {
+                            foreach (var lis in loginTime)
+                            {
+                                LoginTime loginTime1 = new LoginTime();
+
+                                employeeVM.TimeIn = lis.TimeIn;
+
+                                DateTime TimeIn = (DateTime)employeeVM.TimeIn;
+                                string timeInString = TimeIn.ToLongTimeString();
+                                employeeVM.TimeInString = timeInString;
+
+                                employeeVM.TimeOut = lis.TimeOut;
+
+                                DateTime TimeOut = (DateTime)employeeVM.TimeOut;
+                                string timeOutString = TimeOut.ToLongTimeString();
+                                employeeVM.TimeOutString = timeOutString;
+
+                                TimeSpan difference = TimeOut.Subtract(TimeIn);
+
+                                TimeSpan ts2 = TimeSpan.Parse(difference.ToString());
+                                ts2 = new TimeSpan(ts2.Ticks / TimeSpan.TicksPerSecond * TimeSpan.TicksPerSecond);
+                                employeeVM.TotalTime = ts2;
+
+                            }
+                           employee.Add(employeeVM);
+                        }
+
                     }
                 }
             }
@@ -1294,30 +1436,31 @@ namespace EmployeeAttendance.BAL.Services
         public List<leaveVM> TimeDetail(Guid id)
         {
             List<leaveVM> leaveVMs = new List<leaveVM>();
+            leaveVM lev = new leaveVM();
             try
             {
                 EmployeeDetail emp = _context.EmployeeDetails.FirstOrDefault(x => x.EmployeeId == id && x.IsDeleted == false);
 
-                HttpContext.Current.Session["EmpID"] = emp.EmployeeId;
-
-                var empId = new Guid(HttpContext.Current.Session["EmpID"].ToString());
-
+                //HttpContext.Current.Session["EmpID"] = emp.EmployeeId;
+                //var empId = new Guid(HttpContext.Current.Session["EmpID"].ToString());
+                var empId = emp.EmployeeId;
+                lev.DepartmentName = emp.Department.DepartmentName;
                 UserLoginDetail userLogin = _context.UserLoginDetails.FirstOrDefault(x => x.UserLoginDetailsId == empId && x.IsDeleted == false);
 
-                HttpContext.Current.Session["EmpId"] = userLogin.Id;
+                //HttpContext.Current.Session["EmpId"] = userLogin.Id;
 
-                var userLogInId = new Guid(HttpContext.Current.Session["EmpId"].ToString());
+                var userLogInId = userLogin.Id;
 
                 var LastFourDays = DateTime.Now.AddDays(-4);
 
-                var loginTime = _context.LoginTimes.Where(x => x.LoginTimeId == userLogInId && x.IsDeleted == false && x.CreatedOn >= LastFourDays /*&& x.TotalTime != null*/)
+                var loginTime = _context.LoginTimes.Where(x => x.LoginTimeId == userLogInId && x.IsDeleted == false && x.CreatedOn >= LastFourDays && x.TimeOut != null)
                     .ToList();
 
                 if (loginTime != null)
                 {
                     foreach (var lis in loginTime)
                     {
-                        leaveVM lev = new leaveVM();
+                       
 
                         if (lev.ProjectID == null)
                         {
@@ -1485,7 +1628,7 @@ namespace EmployeeAttendance.BAL.Services
             var fromDate = FromDate;
             var toDate = ToDate;
 
-            var data = _context.LoginTimes.Where(x => x.CreatedOn >= fromDate && x.CreatedOn <= toDate && x.IsDeleted == false/* && x.TotalTime != null*/ && x.ProjectID == null).ToList();
+            var data = _context.LoginTimes.Where(x => x.CreatedOn >= fromDate && x.CreatedOn <= toDate && x.IsDeleted == false && x.TimeOut != null && x.ProjectID == null).ToList();
 
             foreach (var item in data)
             {

@@ -372,6 +372,7 @@
     <Content Include="Views\DashBoard\TimeRelatedToProject.cshtml" />
     <Content Include="Views\DashBoard\PopUp.cshtml" />
     <Content Include="Views\Employee\_SearchingPartial.cshtml" />
+    <Content Include="Views\Employee\_TotalTimeOfEmployees.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

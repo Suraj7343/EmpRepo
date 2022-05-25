@@ -1,0 +1,68 @@
+﻿@model IEnumerable<EmployeeAttendance.BAL.Models.EmployeeVM>
+
+@{
+    ViewBag.Title = "Display";
+}
+<br />
+<br />
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <h1 class="panel-title text-center">Attendance Table</h1>
+    </div>
+    <div class="panel-body">
+   
+        <br />
+        <br />
+        <br />
+        <div class="jumbotron">
+            <div class="">
+                <table class="table text-justify">
+                    <tr>
+                        <th> Employee Image</th>
+                        <th>FirstName</th>
+                        <th>TimeIn</th>
+                        <th>TimeOut</th>
+                        <th>TotalTime</th>
+                        @*<th>LastName</th>
+                        <th>Email</th>
+                        <th>Contact</th>
+                        <th>Department</th>*@
+                        @*<th>Project</th>*@
+                        <th>Actions</th>
+                    </tr>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>
+                                <img src="@Url.Content(item.EmployeeImage)" height="50" width="70" />
+                                @Html.HiddenFor(modelItem => item.EmployeeId)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.FirstName)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.TimeInString)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.TimeOutString)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.TotalTime)
+                            </td>
+
+                            @*<td>
+                                @Html.DisplayFor(modelItem => item.DepartmentName)
+                            </td>*@
+                            @*<td>
+                                    @Html.DisplayFor(modelItem => item.ProjectName)
+                                </td>*@
+                            <td>
+                                @Html.ActionLink("TimeDetails", "TimeDetails", new { id = item.EmployeeId }) |
+                            </td>
+                        </tr>
+                    }
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
